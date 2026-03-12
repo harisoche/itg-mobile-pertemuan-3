@@ -14,12 +14,14 @@ extension JobLabel on Job {
 }
 
 class HeroRpg {
+  final String title;
   final String name;
   final Job job;
   final int baseHp;
   final int baseMp;
 
   const HeroRpg({
+    required this.title,
     required this.name,
     required this.job,
     required this.baseHp,
@@ -30,6 +32,7 @@ class HeroRpg {
   const HeroRpg.novice(String name)
       : name = name,
         job = Job.warrior,
+        title = 'No Title',
         baseHp = 50,
         baseMp = 20;
 
@@ -44,6 +47,7 @@ class HeroRpg {
     };
 
     return HeroRpg(
+      title: (json['title'] as String?) ?? 'No Title',
       name: (json['name'] as String?) ?? 'Unknown',
       job: job,
       baseHp: (json['baseHp'] as int?) ?? 50,
@@ -63,12 +67,23 @@ class HeroRpg {
   // Method: mengembalikan object baru (immutable style)
   HeroRpg levelUp(int times) {
     return HeroRpg(
+      title: title,
       name: name,
       job: job,
       baseHp: baseHp + 10 * times,
       baseMp: baseMp + 8 * times,
     );
   }
+
+  HeroRpg heal(int amount) {
+  return HeroRpg(
+    title: title,
+    name: name,
+    job: job,
+    baseHp: baseHp + amount,
+    baseMp: baseMp,
+  );
+}
 
   @override
   String toString() {
