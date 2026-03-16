@@ -2,6 +2,17 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import '../models/hero.dart';
 
+// TANTANGAN 3: Extension untuk String
+extension StringExtension on String {
+  String toTitleCase() {
+    if (isEmpty) return this;
+    return split(' ').map((word) {
+      if (word.isEmpty) return word;
+      return word[0].toUpperCase() + word.substring(1).toLowerCase();
+    }).join(' ');
+  }
+}
+
 class DartLabPage extends StatefulWidget {
   const DartLabPage({super.key});
 
@@ -11,32 +22,208 @@ class DartLabPage extends StatefulWidget {
 
 class _DartLabPageState extends State<DartLabPage> {
   String output = 'Tekan tombol untuk melihat demo Dart!';
+  
+  // Untuk Tantangan 1 & 2: Kita perlu menyimpan state hero dan inventory
+  HeroRpg? myHero;
+  Map<String, int> inventory = {
+    'potion': 3,
+    'elixir': 1,
+    'gold': 500,
+    'key': 2,
+  };
+  int currentHp = 75;
+  final int maxHp = 100;
+
+  @override
+  void initState() {
+    super.initState();
+    myHero = HeroRpg(
+      name: 'Salma',
+      job: Job.mage,
+      baseHp: maxHp,
+      baseMp: 150,
+    );
+  }
 
   void show(String text) {
     setState(() => output = text);
   }
 
+  // TANTANGAN 1: Tombol Heal (Immutable - return Hero baru)
+  void demoHeal() {
+    if (myHero == null) {
+      show('Hero belum diinisialisasi!');
+      return;
+    }
+    
+    final oldHero = myHero!;
+    final oldHp = currentHp;
+    
+    // Simulasi heal dengan menambah HP
+    final newHp = currentHp + 10 > maxHp ? maxHp : currentHp + 10;
+    
+    setState(() {
+      currentHp = newHp;
+    });
+    
+    show(
+      '=== HEAL +10 (IMMUTABLE CONCEPT) ===\n'
+      'Hero: ${oldHero.name} (${oldHero.job.label})\n'
+      'HP lama: $oldHp\n'
+      'HP baru: $newHp\n'
+      'Max HP: $maxHp\n'
+      '\n'
+      'Konsep Immutable:\n'
+      '- Object HeroRpg tidak berubah (final fields)\n'
+      '- State HP disimpan terpisah di widget\n'
+      '- Jika HeroRpg dibuat ulang, akan object baru\n'
+      '\n'
+      'Contoh immutable: method levelUp() mengembalikan object baru\n'
+      'Hero sekarang: ${oldHero.power} power'
+    );
+  }
+
+  // TANTANGAN 2: Tombol Inventory dengan format rapi
+  void demoInventory() {
+    if (myHero == null) {
+      show('Hero belum diinisialisasi!');
+      return;
+    }
+    
+    final hero = myHero!;
+    
+    final buffer = StringBuffer();
+    buffer.writeln('=== INVENTORY ${hero.name.toUpperCase()} ===');
+    buffer.writeln('');
+    
+    if (inventory.isEmpty) {
+      buffer.writeln('Inventory kosong');
+    } else {
+      // Urutkan item berdasarkan nama
+      final sortedKeys = inventory.keys.toList()..sort();
+      for (final item in sortedKeys) {
+        final jumlah = inventory[item];
+        final itemStr = item.padRight(12);
+        final jumlahStr = jumlah.toString().padLeft(3);
+        buffer.writeln('  $itemStr: $jumlahStr pcs');
+      }
+    }
+    
+    buffer.writeln('');
+    buffer.writeln('=' * 30);
+    
+    // Hitung total item
+    final totalItems = inventory.values.fold(0, (sum, qty) => sum + qty);
+    buffer.writeln('Total item    : $totalItems pcs');
+    buffer.writeln('HP Hero       : $currentHp/$maxHp');
+    buffer.writeln('Job           : ${hero.job.label}');
+    buffer.writeln('Base Power    : ${hero.power}');
+    
+    show(buffer.toString());
+  }
+
+  // Method untuk menambah item ke inventory (utility)
+  void addItemToInventory(String item, int jumlah) {
+    setState(() {
+      inventory[item] = (inventory[item] ?? 0) + jumlah;
+    });
+  }
+
+  // TANTANGAN 3: Demo Title Case untuk nama monster
+  void demoTitleCase() {
+    final monsters = [
+      'goblin',
+      'slime raksasa',
+      'dragon api',
+      'wolf hitam',
+      'orc hutan',
+      'serpent laut',
+    ];
+    
+    final random = Random();
+    final monster = monsters[random.nextInt(monsters.length)];
+    
+    final loots = ['Gold', 'Potion', 'Gem', 'Elixir', 'Key'];
+    final loot = loots[random.nextInt(loots.length)];
+    final amount = random.nextInt(3) + 1;
+    
+    String result = '=== EXTENSION: toTitleCase() ===\n\n';
+    result += 'Bertemu monster: ${monster.toTitleCase()}\n';
+    result += 'Monster dikalahkan!\n';
+    result += 'Mendapat loot: $loot $amount pcs\n\n';
+    result += 'Contoh penggunaan toTitleCase():\n';
+    result += '(mengubah huruf pertama setiap kata menjadi kapital)\n\n';
+    
+    for (var m in monsters) {
+      result += '  "${m.padRight(15)}" -> "${m.toTitleCase()}"\n';
+    }
+    
+    // Tambahkan item ke inventory
+    addItemToInventory(loot.toLowerCase(), amount);
+    result += '\nItem loot ditambahkan ke inventory!';
+    
+    show(result);
+  }
+
+  // TANTANGAN 4: Async function dengan Future.delayed
+  Future<Map<String, int>> fetchShopItems() async {
+    await Future.delayed(const Duration(seconds: 1));
+    
+    final random = Random();
+    return {
+      'potion': random.nextInt(5) + 3,
+      'elixir': random.nextInt(3) + 1,
+      'ether': random.nextInt(2) + 1,
+      'antidote': random.nextInt(4) + 2,
+      'scroll': random.nextInt(2) + 1,
+    };
+  }
+
+  Future<void> demoShop() async {
+    show('Menghubungi toko... (loading 1 detik)');
+    
+    try {
+      final shopItems = await fetchShopItems();
+      
+      final buffer = StringBuffer();
+      buffer.writeln('=== SHOP ITEMS ===');
+      buffer.writeln('');
+      
+      shopItems.forEach((item, jumlah) {
+        final itemStr = item.padRight(10);
+        final jumlahStr = jumlah.toString().padLeft(2);
+        buffer.writeln('  $itemStr: $jumlahStr pcs');
+      });
+      
+      buffer.writeln('');
+      buffer.writeln('=' * 30);
+      buffer.writeln('Async dengan Future:');
+      buffer.writeln('- Future.delayed 1 detik');
+      buffer.writeln('- await ambil data');
+      buffer.writeln('- try/catch handling error');
+      
+      // Beli 1 potion otomatis
+      if (shopItems.containsKey('potion') && shopItems['potion']! > 0) {
+        addItemToInventory('potion', 1);
+        buffer.writeln('');
+        buffer.writeln('Membeli 1 Potion dari toko!');
+      }
+      
+      show(buffer.toString());
+      
+    } catch (e) {
+      show('Gagal mengambil data shop: $e');
+    }
+  }
+
   // 1) VAR / FINAL / CONST + NULL SAFETY
   void demoVariablesAndNullSafety() {
-    // var: tipe bisa "di-infer" oleh Dart
-    var name = 'Rani'; // String
-
-    // final: nilainya hanya bisa di-assign sekali (runtime constant)
+    var name = 'Rani';
     final hp = 100;
-
-    // const: benar-benar constant di compile-time
     const maxLevel = 10;
-
-    // Null safety: tipe? artinya boleh null
     String? guild;
-
-    // Operator ?? (kalau null, pakai nilai pengganti)
     final guildName = guild ?? 'No Guild';
-
-    // Operator ?. (akses property/method kalau tidak null)
-    final guildUpper = guildName.toUpperCase(); // hasilnya String? (bisa null)
-
-    // Contoh list yang boleh menyimpan null
+    final guildUpper = guildName.toUpperCase();
     final List<int?> potions = [1, null, 3];
 
     show([
@@ -46,7 +233,7 @@ class _DartLabPageState extends State<DartLabPage> {
       'maxLevel (const): $maxLevel',
       'guild: $guild',
       'guildName (??): $guildName',
-      'guildUpper (?.): $guildUpper',
+      'guildUpper: $guildUpper',
       'potions: $potions',
       '',
       'Catatan:',
@@ -59,20 +246,17 @@ class _DartLabPageState extends State<DartLabPage> {
 
   // 2) FUNCTION: positional, named, optional, arrow, higher-order
   void demoFunctions() {
-    int add(int a, int b) => a + b; // arrow function
+    int add(int a, int b) => a + b;
 
-    // optional positional parameter [ ... ]
     String greet(String name, [String? title]) {
       if (title == null) return 'Halo $name!';
       return 'Halo $title $name!';
     }
 
-    // named parameter { ... } + required
     String castSpell({required String spell, int manaCost = 10}) {
-      return '🪄 Cast $spell (mana -$manaCost)';
+      return 'Cast $spell (mana -$manaCost)';
     }
 
-    // function sebagai parameter
     int applyTwice(int value, int Function(int) f) {
       return f(f(value));
     }
@@ -82,7 +266,7 @@ class _DartLabPageState extends State<DartLabPage> {
     final hello2 = greet('Rani', 'Mage');
     final spell1 = castSpell(spell: 'Fireball');
     final spell2 = castSpell(spell: 'Heal', manaCost: 5);
-    final doubledTwice = applyTwice(3, (x) => x * 2); // 3 -> 6 -> 12
+    final doubledTwice = applyTwice(3, (x) => x * 2);
 
     show([
       '=== Functions ===',
@@ -104,32 +288,20 @@ class _DartLabPageState extends State<DartLabPage> {
   // 3) COLLECTION: List/Map + map/where/fold + collection if/for
   void demoCollections() {
     final rng = Random();
-
-    // List
     final monsters = ['Slime', 'Goblin', 'Wolf', 'Dragon'];
-
-    // Ambil monster yang panjang namanya > 4
     final strongNames = monsters.where((m) => m.length > 4).toList();
-
-    // Ubah jadi "Monster: X"
     final labeled = monsters.map((m) => 'Monster: $m').toList();
-
-    // Total damage acak untuk 3 hit
-    final hits = List.generate(3, (_) => rng.nextInt(10) + 1); // 1..10
+    final hits = List.generate(3, (_) => rng.nextInt(10) + 1);
     final totalDamage = hits.fold<int>(0, (sum, x) => sum + x);
-
-    // Map
     final loot = {
       'gold': 120,
       'potion': 2,
       'gem': 1,
     };
-
-    // Collection if/for (seru buat bikin list dinamis)
-    final level = rng.nextInt(5) + 1; // 1..5
+    final level = rng.nextInt(5) + 1;
     final rewards = [
-      '🎁 Daily Reward',
-      if (level >= 3) '⭐ Bonus Reward (level >= 3)',
+      'Daily Reward',
+      if (level >= 3) 'Bonus Reward (level >= 3)',
       for (final item in loot.keys) '• $item',
     ];
 
@@ -159,7 +331,6 @@ class _DartLabPageState extends State<DartLabPage> {
     final hero = HeroRpg(name: 'Rani', job: Job.mage, baseHp: 80, baseMp: 120);
     final leveled = hero.levelUp(3);
 
-    // Simulasi data JSON (Map)
     final json = {
       'name': 'Bima',
       'job': 'warrior',
@@ -190,14 +361,14 @@ class _DartLabPageState extends State<DartLabPage> {
 
   // 5) ASYNC/AWAIT + TRY/CATCH
   Future<void> demoAsyncAwait() async {
-    show('⏳ Mengambil quest dari server...');
+    show('Mengambil quest dari server...');
 
     try {
       final quest = await fetchQuest();
       show([
         '=== Async/Await ===',
         'Quest didapat!',
-        '• $quest',
+        quest,
         '',
         'Catatan:',
         '- Future = nilai yang datang belakangan',
@@ -205,27 +376,22 @@ class _DartLabPageState extends State<DartLabPage> {
         '- try/catch = tangani error',
       ].join('\n'));
     } catch (e) {
-      show('❌ Gagal ambil quest: $e');
+      show('Gagal ambil quest: $e');
     }
   }
 
   Future<String> fetchQuest() async {
-    // Simulasi "internet" dengan delay
     await Future.delayed(const Duration(seconds: 1));
-
-    // Kadang gagal biar seru
     final rng = Random();
     if (rng.nextInt(5) == 0) {
-      throw Exception('Server sedang tidur 😴');
+      throw Exception('Server sedang tidur');
     }
-
     const quests = [
       'Kalahkan 3 Goblin',
       'Cari 2 Potion',
       'Lindungi desa dari Wolf',
       'Temukan Gem tersembunyi',
     ];
-
     return quests[rng.nextInt(quests.length)];
   }
 
@@ -269,6 +435,46 @@ class _DartLabPageState extends State<DartLabPage> {
                   onPressed: () => demoAsyncAwait(),
                   icon: const Icon(Icons.cloud_download),
                   label: const Text('Async/Await'),
+                ),
+                // TANTANGAN 1: Tombol Heal
+                ElevatedButton.icon(
+                  onPressed: demoHeal,
+                  icon: const Icon(Icons.favorite),
+                  label: const Text('Heal +10'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+                // TANTANGAN 2: Tombol Inventory
+                ElevatedButton.icon(
+                  onPressed: demoInventory,
+                  icon: const Icon(Icons.inventory),
+                  label: const Text('Inventory'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+                // TANTANGAN 3: Tombol Title Case
+                ElevatedButton.icon(
+                  onPressed: demoTitleCase,
+                  icon: const Icon(Icons.title),
+                  label: const Text('Title Case'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+                // TANTANGAN 4: Tombol Shop Async
+                ElevatedButton.icon(
+                  onPressed: demoShop,
+                  icon: const Icon(Icons.shopping_cart),
+                  label: const Text('Shop Async'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple,
+                    foregroundColor: Colors.white,
+                  ),
                 ),
                 OutlinedButton.icon(
                   onPressed: () => show('Tekan tombol untuk melihat demo Dart!'),
