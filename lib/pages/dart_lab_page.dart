@@ -15,14 +15,17 @@ class _DartLabPageState extends State<DartLabPage> {
   void show(String text) {
     setState(() => output = text);
   }
-
+int hp = 50;
+void heal(int amount) {
+  hp += amount;
+}
   // 1) VAR / FINAL / CONST + NULL SAFETY
   void demoVariablesAndNullSafety() {
     // var: tipe bisa "di-infer" oleh Dart
     var name = 'Rani'; // String
 
     // final: nilainya hanya bisa di-assign sekali (runtime constant)
-    final hp = 100;
+    
 
     // const: benar-benar constant di compile-time
     const maxLevel = 10;
@@ -42,7 +45,7 @@ class _DartLabPageState extends State<DartLabPage> {
     show([
       '=== Variables + Null Safety ===',
       'name (var): $name',
-      'hp (final): $hp',
+      'hp (var): $hp',
       'maxLevel (const): $maxLevel',
       'guild: $guild',
       'guildName (??): $guildName',
@@ -229,6 +232,19 @@ class _DartLabPageState extends State<DartLabPage> {
     return quests[rng.nextInt(quests.length)];
   }
 
+  Map<String,int> inventory = {
+    'Potion': 3,
+    'Elixir': 1,
+    'Bomb': 2,
+  };
+
+
+  void tampilkanInventory(){
+    inventory.forEach((item, jumlah) {
+      show(inventory.toString());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -275,6 +291,19 @@ class _DartLabPageState extends State<DartLabPage> {
                   icon: const Icon(Icons.refresh),
                   label: const Text('Clear'),
                 ),
+                ElevatedButton.icon(
+                  onPressed: () => heal(10),
+                  icon: const Icon(Icons.healing),
+                  label: const Text('Heal: +10 HP'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    tampilkanInventory();
+                  },
+                  icon: const Icon(Icons.badge),
+                  label: const Text('Inventory'),
+                ),
+              
               ],
             ),
             const SizedBox(height: 16),
