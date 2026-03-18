@@ -1,3 +1,4 @@
+
 enum Job { warrior, mage, archer }
 
 extension JobLabel on Job {
@@ -18,12 +19,15 @@ class HeroRpg {
   final Job job;
   final int baseHp;
   final int baseMp;
+// Latihan C: Tambahkan field di title di JSON, lalu update name atau field baru).
+  final String? title;
 
   const HeroRpg({
     required this.name,
     required this.job,
     required this.baseHp,
     required this.baseMp,
+    this.title,
   });
 
   // Named constructor (contoh)
@@ -31,7 +35,8 @@ class HeroRpg {
       : name = name,
         job = Job.warrior,
         baseHp = 50,
-        baseMp = 20;
+        baseMp = 20,
+        title = null;
 
   // Factory: bikin object dari Map/JSON
   factory HeroRpg.fromJson(Map<String, dynamic> json) {
@@ -43,11 +48,15 @@ class HeroRpg {
       _ => Job.warrior,
     };
 
+    // Latihan C: Cek field title, kalau ada pakai itu, kalau tidak ada pakai name, kalau name juga tidak ada, pakai 'Unknown'
+    final rawName = (json['name'] as String?) ?? json['title'] as String? ?? 'Unknown';
+
     return HeroRpg(
-      name: (json['name'] as String?) ?? 'Unknown',
+      name: rawName,
       job: job,
       baseHp: (json['baseHp'] as int?) ?? 50,
       baseMp: (json['baseMp'] as int?) ?? 20,
+      title: json['title'] as String?,
     );
   }
 
@@ -68,10 +77,19 @@ class HeroRpg {
       baseHp: baseHp + 10 * times,
       baseMp: baseMp + 8 * times,
     );
+
+  
   }
 
   @override
   String toString() {
     return 'HeroRpg(name: $name, job: ${job.label}, hp: $baseHp, mp: $baseMp)';
+  }
+}
+
+// Tugas 3: Buat extension untuk String: toTitleCase() lalu pakai untuk nama monster
+extension StringCaseExtension on String {
+  String toSnakeCase() {
+    return replaceAll(' ', '_').toLowerCase();
   }
 }
