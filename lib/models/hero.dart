@@ -13,14 +13,27 @@ extension JobLabel on Job {
   }
 }
 
+extension StringExtension on String {
+  String toTitleCase() {
+    if (this.isEmpty) return this;
+    return this.split(' ')
+        .map((word) => word.isNotEmpty 
+            ? '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}' 
+            : '')
+        .join(' ');
+  }
+}
+
 class HeroRpg {
   final String name;
+  final String? title;
   final Job job;
   final int baseHp;
   final int baseMp;
 
   const HeroRpg({
     required this.name,
+    required this.title,
     required this.job,
     required this.baseHp,
     required this.baseMp,
@@ -29,9 +42,22 @@ class HeroRpg {
   // Named constructor (contoh)
   const HeroRpg.novice(String name)
       : name = name,
+        title = 'Novice',
         job = Job.warrior,
         baseHp = 50,
         baseMp = 20;
+
+  HeroRpg heal() {
+    print("Mengobati $name... HP bertambah +10!");
+    return HeroRpg(
+      name: name,
+      title: title,
+      job: job,
+      baseHp: baseHp + 10, // Tambah HP 10
+      baseMp: baseMp,
+    );
+  }
+
 
   // Factory: bikin object dari Map/JSON
   factory HeroRpg.fromJson(Map<String, dynamic> json) {
@@ -45,6 +71,7 @@ class HeroRpg {
 
     return HeroRpg(
       name: (json['name'] as String?) ?? 'Unknown',
+      title: json['title'] as String?,
       job: job,
       baseHp: (json['baseHp'] as int?) ?? 50,
       baseMp: (json['baseMp'] as int?) ?? 20,
@@ -64,6 +91,7 @@ class HeroRpg {
   HeroRpg levelUp(int times) {
     return HeroRpg(
       name: name,
+      title: title,
       job: job,
       baseHp: baseHp + 10 * times,
       baseMp: baseMp + 8 * times,
@@ -72,6 +100,6 @@ class HeroRpg {
 
   @override
   String toString() {
-    return 'HeroRpg(name: $name, job: ${job.label}, hp: $baseHp, mp: $baseMp)';
+    return 'HeroRpg(name: ${name.toTitleCase()}, job: ${job.label}, hp: $baseHp, mp: $baseMp)';
   }
 }

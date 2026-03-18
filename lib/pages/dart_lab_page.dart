@@ -12,8 +12,76 @@ class DartLabPage extends StatefulWidget {
 class _DartLabPageState extends State<DartLabPage> {
   String output = 'Tekan tombol untuk melihat demo Dart!';
 
+  HeroRpg myHero = HeroRpg.novice("rani si penyihir");
+
+  List<String> loots = ['gold', 'potion', 'gem', 'scroll'];
+
+  void runHeal() {
+    if (myHero.baseHp >= 100) {
+      show("❌ HP sudah penuh (Max 100)! Gak bisa heal lagi.");
+      return; // Berhenti di sini, gak lanjut ke setState
+    }
+    setState(() {
+      myHero = myHero.heal(); // Memakai method heal() dari models/hero.dart
+      show([
+        '=== TANTANGAN 1: HEAL ===',
+        'Hero: ${myHero.name.toTitleCase()}', // TANTANGAN 3 Terpakai di sini
+        'HP Sekarang: ${myHero.baseHp} ❤️',
+      ].join('\n'));
+    });
+  }
+
+  Future<void> fetchShopItems() async {
+    show('⏳ Mengambil barang di toko (delay 1 detik)...');
+    
+    await Future.delayed(const Duration(seconds: 1)); // Delay sesuai instruksi PR
+    
+    List<String> shopItems = ['Excalibur', 'Mana Potion', 'Dragon Shield'];
+    
+    show([
+      '=== TANTANGAN 4: ASYNC SHOP ===',
+      'Barang tersedia hari ini:',
+      ...shopItems.map((item) => '• $item'),
+    ].join('\n'));
+  }
+
   void show(String text) {
     setState(() => output = text);
+  }
+
+
+
+  void runRandomLoot() {
+    final rng = Random();
+    // Ngambil satu item acak dari list berdasarkan index (0-3)
+    String item = loots[rng.nextInt(loots.length)];
+    
+    show([
+      '=== Latihan A: Random Loot ===',
+      'Membuka peti harta karun...',
+      'Selamat! Lu dapet: 🎁 $item',
+    ].join('\n'));
+  }
+
+
+  // monster itu positional, bonus itu named parameter (pakai {})
+  void attack(String monster, {int bonus = 0}) {
+    final rng = Random();
+    
+    // 1. Hitung base damage acak (1 sampai 10)
+    int baseAtk = rng.nextInt(10) + 1; 
+    
+    // 2. Hitung total damage
+    int totalDamage = baseAtk + bonus;
+    
+    show([
+      '=== Latihan B: Attack Function ===',
+      'Target: $monster',
+      'Base ATK  : $baseAtk 🎲',
+      'Bonus     : $bonus ⚡',
+      '-------------------------',
+      '⚔️ Total Damage: $totalDamage',
+    ].join('\n'));
   }
 
   // 1) VAR / FINAL / CONST + NULL SAFETY
@@ -156,12 +224,13 @@ class _DartLabPageState extends State<DartLabPage> {
 
   // 4) CLASS + CONSTRUCTOR + FACTORY + GETTER + ENUM + EXTENSION
   void demoClasses() {
-    final hero = HeroRpg(name: 'Rani', job: Job.mage, baseHp: 80, baseMp: 120);
+    final hero = HeroRpg(name: 'Rani', title: 'Novice', job: Job.mage, baseHp: 80, baseMp: 120);
     final leveled = hero.levelUp(3);
 
     // Simulasi data JSON (Map)
     final json = {
       'name': 'Bima',
+      'title': 'Warrior',
       'job': 'warrior',
       'baseHp': 120,
       'baseMp': 40,
@@ -270,7 +339,36 @@ class _DartLabPageState extends State<DartLabPage> {
                   icon: const Icon(Icons.cloud_download),
                   label: const Text('Async/Await'),
                 ),
-                OutlinedButton.icon(
+                ElevatedButton.icon(
+                  onPressed: runRandomLoot,
+                  icon: const Icon(Icons.casino),
+                  label: const Text('Random Loot'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () => attack('Goblin', bonus: 5), // Contoh panggil pakai bonus
+                  icon: const Icon(Icons.colorize), // Icon pedang/attack
+                  label: const Text('Attack Goblin'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: runHeal,
+                  icon: const Icon(Icons.favorite),
+                  label: const Text('Heal Hero'),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green[100]),
+                ),
+                ElevatedButton.icon(
+                  onPressed: fetchShopItems,
+                  icon: const Icon(Icons.shopping_cart),
+                  label: const Text('Fetch Shop'),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.orange[100]),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    // Contoh penggunaan toTitleCase (Tantangan 3)
+                    show("Nama Monster: ${'raja goblin rawa'.toTitleCase()}");
+                  },
+                  icon: const Icon(Icons.text_fields),
+                  label: const Text('Monster Name'),
+                ),                OutlinedButton.icon(
                   onPressed: () => show('Tekan tombol untuk melihat demo Dart!'),
                   icon: const Icon(Icons.refresh),
                   label: const Text('Clear'),
