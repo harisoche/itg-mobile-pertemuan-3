@@ -15,6 +15,32 @@ class _DartLabPageState extends State<DartLabPage> {
   void show(String text) {
     setState(() => output = text);
   }
+  Map<String, int> inventory = {
+  'Potion': 2,
+  'Gold': 100,
+  'Gem': 1,
+};
+Future<List<String>> fetchShopItems() async {
+  await Future.delayed(const Duration(seconds: 1)); // simulasi loading
+
+  return [
+    'Sword',
+    'Shield',
+    'Potion',
+    'Magic Staff',
+  ];
+}
+Future<void> demoShop() async {
+  show('🛒 Mengambil item shop...');
+
+  final items = await fetchShopItems();
+
+  show([
+    '=== Shop ===',
+    'Item tersedia:',
+    ...items.map((e) => '- $e'),
+  ].join('\n'));
+}
 
   // 1) VAR / FINAL / CONST + NULL SAFETY
   void demoVariablesAndNullSafety() {
@@ -106,13 +132,15 @@ class _DartLabPageState extends State<DartLabPage> {
     final rng = Random();
 
     // List
-    final monsters = ['Slime', 'Goblin', 'Wolf', 'Dragon'];
+    final monsters = ['slime', 'goblin king', 'fire dragon'];
 
     // Ambil monster yang panjang namanya > 4
     final strongNames = monsters.where((m) => m.length > 4).toList();
 
     // Ubah jadi "Monster: X"
-    final labeled = monsters.map((m) => 'Monster: $m').toList();
+    final labeled = monsters
+    .map((m) => 'Monster: ${m.toTitleCase()}')
+    .toList();
 
     // Total damage acak untuk 3 hit
     final hits = List.generate(3, (_) => rng.nextInt(10) + 1); // 1..10
@@ -153,20 +181,59 @@ class _DartLabPageState extends State<DartLabPage> {
       '- collection if/for = list dinamis',
     ].join('\n'));
   }
+  void demoRandomLoot() {
+  final rng = Random();
+  const loots = ['gold', 'potion', 'gem', 'scroll'];
+
+  final loot = loots[rng.nextInt(loots.length)];
+
+  show([
+    '=== Random Loot ===',
+    'Kamu mendapatkan:',
+    '🎁 $loot',
+  ].join('\n'));
+}
+void demoAttack() {
+  final rng = Random();
+
+  final target = 'Goblin';
+  final damage = rng.nextInt(10) + 1; // 1 - 10
+
+  show([
+    '=== Attack ===',
+    'Target: $target',
+    'Damage: $damage',
+  ].join('\n'));
+}
+void demoInventory() {
+  List<String> result = ['=== Inventory ==='];
+
+  inventory.forEach((item, qty) {
+    result.add('$item: $qty');
+  });
+
+  show(result.join('\n'));
+}
 
   // 4) CLASS + CONSTRUCTOR + FACTORY + GETTER + ENUM + EXTENSION
   void demoClasses() {
-    final hero = HeroRpg(name: 'Rani', job: Job.mage, baseHp: 80, baseMp: 120);
+   final hero = HeroRpg(
+    name: 'Rani',
+    title: 'The Mage', 
+    job: Job.mage,
+    baseHp: 80,
+    baseMp: 120,
+  );
     final leveled = hero.levelUp(3);
 
     // Simulasi data JSON (Map)
     final json = {
-      'name': 'Bima',
-      'job': 'warrior',
+      'name': 'Rani',
+      'title': 'The Mage',
+      'job': 'mage',
       'baseHp': 120,
       'baseMp': 40,
     };
-
     final hero2 = HeroRpg.fromJson(json);
 
     show([
@@ -176,7 +243,7 @@ class _DartLabPageState extends State<DartLabPage> {
       'leveled (levelUp 3x): $leveled',
       '',
       'fromJson:',
-      'hero2: $hero2',
+      'hero2: ${hero2.name} (${hero2.title})',
       'hero2.jobLabel => ${hero2.job.label}',
       '',
       'Catatan:',
@@ -187,7 +254,23 @@ class _DartLabPageState extends State<DartLabPage> {
       '- extension = nambah kemampuan ke tipe (job.label)',
     ].join('\n'));
   }
+  void demoHeal() {
+  final hero = HeroRpg(
+    name: 'Rani',
+    title: 'The Mage',
+    job: Job.mage,
+    baseHp: 80,
+    baseMp: 120,
+  );
 
+  final healed = hero.heal();
+
+  show([
+    '=== Heal ===',
+    'Sebelum: HP ${hero.baseHp}',
+    'Sesudah: HP ${healed.baseHp}',
+  ].join('\n'));
+}
   // 5) ASYNC/AWAIT + TRY/CATCH
   Future<void> demoAsyncAwait() async {
     show('⏳ Mengambil quest dari server...');
@@ -269,6 +352,36 @@ class _DartLabPageState extends State<DartLabPage> {
                   onPressed: () => demoAsyncAwait(),
                   icon: const Icon(Icons.cloud_download),
                   label: const Text('Async/Await'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: demoRandomLoot,
+                  icon: const Icon(Icons.card_giftcard),
+                  label: const Text('Random Loot'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: demoAttack,
+                  icon: const Icon(Icons.flash_on),
+                  label: const Text('Attack Goblin'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: demoInventory,
+                  icon: const Icon(Icons.inventory),
+                  label: const Text('Inventory'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: demoHeal,
+                  icon: const Icon(Icons.favorite),
+                  label: const Text('Heal'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: demoInventory,
+                  icon: const Icon(Icons.inventory),
+                  label: const Text('Inventory'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () => demoShop(),
+                  icon: const Icon(Icons.store),
+                  label: const Text('Shop'),
                 ),
                 OutlinedButton.icon(
                   onPressed: () => show('Tekan tombol untuk melihat demo Dart!'),

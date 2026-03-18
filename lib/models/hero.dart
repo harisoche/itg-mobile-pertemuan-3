@@ -18,9 +18,11 @@ class HeroRpg {
   final Job job;
   final int baseHp;
   final int baseMp;
+  final String title;
 
   const HeroRpg({
     required this.name,
+    required this.title,
     required this.job,
     required this.baseHp,
     required this.baseMp,
@@ -29,6 +31,7 @@ class HeroRpg {
   // Named constructor (contoh)
   const HeroRpg.novice(String name)
       : name = name,
+        title = 'Novice',
         job = Job.warrior,
         baseHp = 50,
         baseMp = 20;
@@ -45,6 +48,7 @@ class HeroRpg {
 
     return HeroRpg(
       name: (json['name'] as String?) ?? 'Unknown',
+      title: (json['title'] as String?) ?? 'No Title',
       job: job,
       baseHp: (json['baseHp'] as int?) ?? 50,
       baseMp: (json['baseMp'] as int?) ?? 20,
@@ -64,14 +68,32 @@ class HeroRpg {
   HeroRpg levelUp(int times) {
     return HeroRpg(
       name: name,
+      title: title, 
       job: job,
       baseHp: baseHp + 10 * times,
       baseMp: baseMp + 8 * times,
     );
   }
+  HeroRpg heal() {
+  return HeroRpg(
+    name: name,
+    title: title,
+    job: job,
+    baseHp: baseHp + 10, 
+    baseMp: baseMp,
+  );
+}
 
   @override
   String toString() {
     return 'HeroRpg(name: $name, job: ${job.label}, hp: $baseHp, mp: $baseMp)';
+  }
+}
+extension StringCasingExtension on String {
+  String toTitleCase() {
+    return split(' ')
+        .map((word) =>
+            word.isEmpty ? word : '${word[0].toUpperCase()}${word.substring(1)}')
+        .join(' ');
   }
 }
