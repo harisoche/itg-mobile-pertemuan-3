@@ -229,6 +229,50 @@ class _DartLabPageState extends State<DartLabPage> {
     return quests[rng.nextInt(quests.length)];
   }
 
+// 🔹 HEAL
+void demoHeal() {
+  final hero = HeroRpg(name: 'Rani', job: Job.mage, baseHp: 80, baseMp: 120);
+  final healedHero = hero.heal(10);
+
+  show([
+    '=== Heal ===',
+    'Before: $hero',
+    'After Heal (+10 HP): $healedHero',
+  ].join('\n'));
+}
+
+// 🔹 INVENTORY
+void demoInventory() {
+  final inventory = {
+    'gold': 150,
+    'potion': 3,
+    'gem': 2,
+  };
+
+  final formatted = inventory.entries
+      .map((e) => '• ${e.key}: ${e.value}')
+      .join('\n');
+
+  show([
+    '=== Inventory ===',
+    formatted,
+  ].join('\n'));
+}
+
+// 🔹 SHOP (opsional)
+Future<void> fetchShopItems() async {
+  show('🛒 Loading shop...');
+
+  await Future.delayed(const Duration(seconds: 1));
+
+  final items = ['Sword', 'Shield', 'Potion'];
+
+  show([
+    '=== Shop Items ===',
+    ...items.map((e) => '• $e'),
+  ].join('\n'));
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -269,6 +313,21 @@ class _DartLabPageState extends State<DartLabPage> {
                   onPressed: () => demoAsyncAwait(),
                   icon: const Icon(Icons.cloud_download),
                   label: const Text('Async/Await'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: demoHeal,
+                  icon: const Icon(Icons.favorite),
+                  label: const Text('Heal'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: demoInventory,
+                  icon: const Icon(Icons.inventory),
+                  label: const Text('Inventory'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: fetchShopItems,
+                  icon: const Icon(Icons.store),
+                  label: const Text('Shop'),
                 ),
                 OutlinedButton.icon(
                   onPressed: () => show('Tekan tombol untuk melihat demo Dart!'),
