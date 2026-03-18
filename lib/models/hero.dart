@@ -70,6 +70,16 @@ class HeroRpg {
     );
   }
 
+  // --- TANTANGAN 1: Fungsi Heal (Immutable) ---
+  HeroRpg heal(int amount) {
+    return HeroRpg(
+      name: name,
+      job: job,
+      baseHp: baseHp + amount, // Tambah HP
+      baseMp: baseMp,          // MP tetap
+    );
+  }
+
   @override
   String toString() {
     return 'HeroRpg(name: $name, job: ${job.label}, hp: $baseHp, mp: $baseMp)';
