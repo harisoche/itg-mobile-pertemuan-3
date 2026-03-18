@@ -12,31 +12,23 @@ class DartLabPage extends StatefulWidget {
 class _DartLabPageState extends State<DartLabPage> {
   String output = 'Tekan tombol untuk melihat demo Dart!';
 
+  final Map<String, int> inventory = {};
+
   void show(String text) {
     setState(() => output = text);
   }
 
   // 1) VAR / FINAL / CONST + NULL SAFETY
   void demoVariablesAndNullSafety() {
-    // var: tipe bisa "di-infer" oleh Dart
-    var name = 'Rani'; // String
-
-    // final: nilainya hanya bisa di-assign sekali (runtime constant)
+    var name = 'Rani';
     final hp = 100;
-
-    // const: benar-benar constant di compile-time
     const maxLevel = 10;
 
-    // Null safety: tipe? artinya boleh null
     String? guild;
 
-    // Operator ?? (kalau null, pakai nilai pengganti)
     final guildName = guild ?? 'No Guild';
+    final guildUpper = guildName.toUpperCase();
 
-    // Operator ?. (akses property/method kalau tidak null)
-    final guildUpper = guildName.toUpperCase(); // hasilnya String? (bisa null)
-
-    // Contoh list yang boleh menyimpan null
     final List<int?> potions = [1, null, 3];
 
     show([
@@ -46,149 +38,74 @@ class _DartLabPageState extends State<DartLabPage> {
       'maxLevel (const): $maxLevel',
       'guild: $guild',
       'guildName (??): $guildName',
-      'guildUpper (?.): $guildUpper',
+      'guildUpper: $guildUpper',
       'potions: $potions',
-      '',
-      'Catatan:',
-      '- var = Dart menebak tipe',
-      '- final = sekali assign (runtime)',
-      '- const = compile-time constant',
-      '- String? = boleh null',
     ].join('\n'));
   }
 
-  // 2) FUNCTION: positional, named, optional, arrow, higher-order
+  // 2) FUNCTIONS
   void demoFunctions() {
-    int add(int a, int b) => a + b; // arrow function
+    int add(int a, int b) => a + b;
 
-    // optional positional parameter [ ... ]
     String greet(String name, [String? title]) {
       if (title == null) return 'Halo $name!';
       return 'Halo $title $name!';
     }
 
-    // named parameter { ... } + required
     String castSpell({required String spell, int manaCost = 10}) {
       return '🪄 Cast $spell (mana -$manaCost)';
     }
 
-    // function sebagai parameter
     int applyTwice(int value, int Function(int) f) {
       return f(f(value));
     }
 
-    final resultAdd = add(2, 3);
-    final hello1 = greet('Rani');
-    final hello2 = greet('Rani', 'Mage');
-    final spell1 = castSpell(spell: 'Fireball');
-    final spell2 = castSpell(spell: 'Heal', manaCost: 5);
-    final doubledTwice = applyTwice(3, (x) => x * 2); // 3 -> 6 -> 12
-
     show([
       '=== Functions ===',
-      'add(2,3) => $resultAdd',
-      'greet("Rani") => $hello1',
-      'greet("Rani","Mage") => $hello2',
-      'castSpell(spell:"Fireball") => $spell1',
-      'castSpell(spell:"Heal", manaCost:5) => $spell2',
-      'applyTwice(3, x*2) => $doubledTwice',
-      '',
-      'Catatan:',
-      '- [param] = optional positional',
-      '- {param} = named parameter',
-      '- required = wajib diisi',
-      '- Function bisa jadi parameter',
+      'add(2,3) => ${add(2, 3)}',
+      greet('Rani'),
+      greet('Rani', 'Mage'),
+      castSpell(spell: 'Fireball'),
+      'applyTwice(3, x*2) => ${applyTwice(3, (x) => x * 2)}',
     ].join('\n'));
   }
 
-  // 3) COLLECTION: List/Map + map/where/fold + collection if/for
+  // 3) COLLECTION
   void demoCollections() {
     final rng = Random();
 
-    // List
     final monsters = ['Slime', 'Goblin', 'Wolf', 'Dragon'];
 
-    // Ambil monster yang panjang namanya > 4
     final strongNames = monsters.where((m) => m.length > 4).toList();
-
-    // Ubah jadi "Monster: X"
     final labeled = monsters.map((m) => 'Monster: $m').toList();
 
-    // Total damage acak untuk 3 hit
-    final hits = List.generate(3, (_) => rng.nextInt(10) + 1); // 1..10
+    final hits = List.generate(3, (_) => rng.nextInt(10) + 1);
     final totalDamage = hits.fold<int>(0, (sum, x) => sum + x);
 
-    // Map
-    final loot = {
-      'gold': 120,
-      'potion': 2,
-      'gem': 1,
-    };
-
-    // Collection if/for (seru buat bikin list dinamis)
-    final level = rng.nextInt(5) + 1; // 1..5
-    final rewards = [
-      '🎁 Daily Reward',
-      if (level >= 3) '⭐ Bonus Reward (level >= 3)',
-      for (final item in loot.keys) '• $item',
-    ];
-
     show([
-      '=== Collections (List/Map) ===',
+      '=== Collections ===',
       'monsters: $monsters',
       'where(length>4): $strongNames',
       'map(label): $labeled',
       'hits: $hits',
-      'totalDamage (fold): $totalDamage',
-      '',
-      'loot map: $loot',
-      'random level: $level',
-      'rewards:',
-      ...rewards,
-      '',
-      'Catatan:',
-      '- where = filter',
-      '- map = transform',
-      '- fold = reduce + akumulasi',
-      '- collection if/for = list dinamis',
+      'totalDamage: $totalDamage',
     ].join('\n'));
   }
 
-  // 4) CLASS + CONSTRUCTOR + FACTORY + GETTER + ENUM + EXTENSION
+  // 4) CLASS
   void demoClasses() {
     final hero = HeroRpg(name: 'Rani', job: Job.mage, baseHp: 80, baseMp: 120);
     final leveled = hero.levelUp(3);
 
-    // Simulasi data JSON (Map)
-    final json = {
-      'name': 'Bima',
-      'job': 'warrior',
-      'baseHp': 120,
-      'baseMp': 40,
-    };
-
-    final hero2 = HeroRpg.fromJson(json);
-
     show([
-      '=== Class / Enum / Extension ===',
+      '=== Class ===',
       'hero: $hero',
-      'hero.power => ${hero.power}',
-      'leveled (levelUp 3x): $leveled',
-      '',
-      'fromJson:',
-      'hero2: $hero2',
-      'hero2.jobLabel => ${hero2.job.label}',
-      '',
-      'Catatan:',
-      '- constructor = cara membuat object',
-      '- factory fromJson = bikin object dari Map',
-      '- getter (power) = property hasil hitungan',
-      '- enum = pilihan tetap (job)',
-      '- extension = nambah kemampuan ke tipe (job.label)',
+      'power: ${hero.power}',
+      'leveled: $leveled',
     ].join('\n'));
   }
 
-  // 5) ASYNC/AWAIT + TRY/CATCH
+  // 5) ASYNC/AWAIT 
   Future<void> demoAsyncAwait() async {
     show('⏳ Mengambil quest dari server...');
 
@@ -198,22 +115,16 @@ class _DartLabPageState extends State<DartLabPage> {
         '=== Async/Await ===',
         'Quest didapat!',
         '• $quest',
-        '',
-        'Catatan:',
-        '- Future = nilai yang datang belakangan',
-        '- await = tunggu Future selesai',
-        '- try/catch = tangani error',
       ].join('\n'));
     } catch (e) {
       show('❌ Gagal ambil quest: $e');
     }
   }
 
+  
   Future<String> fetchQuest() async {
-    // Simulasi "internet" dengan delay
     await Future.delayed(const Duration(seconds: 1));
 
-    // Kadang gagal biar seru
     final rng = Random();
     if (rng.nextInt(5) == 0) {
       throw Exception('Server sedang tidur 😴');
@@ -227,6 +138,66 @@ class _DartLabPageState extends State<DartLabPage> {
     ];
 
     return quests[rng.nextInt(quests.length)];
+  }
+
+  //  RANDOM LOOT 
+  void randomLoot() {
+    final lootItems = ['gold', 'potion', 'gem', 'scroll'];
+
+    final loot = lootItems[Random().nextInt(lootItems.length)];
+    addItem(loot);
+
+    show([
+      '=== 🎁 Random Loot ===',
+      'Kamu mendapatkan: $loot',
+      '',
+      'Inventory:',
+      formatInventory(),
+    ].join('\n'));
+  }
+
+  //  ATTACK
+  void attackMonster() {
+    final monsters = ['goblin', 'slime', 'wolf'];
+
+    final monster = monsters[Random().nextInt(monsters.length)];
+    final damage = Random().nextInt(10) + 1;
+
+    show("⚔️ Attack ${monster.toTitleCase()}, damage: $damage");
+  }
+
+  //  HEAL
+  void healHero() {
+    final hero = HeroRpg(name: 'Rani', job: Job.mage, baseHp: 80, baseMp: 120);
+    final healed = hero.levelUp(1);
+
+    show("❤️ Heal!\nHP sekarang: ${healed.baseHp}");
+  }
+
+  //  SHOP
+  Future<void> loadShop() async {
+    show("⏳ Loading shop...");
+    final items = await fetchShopItems();
+
+    show("🛒 Shop:\n${items.join('\n')}");
+  }
+
+  Future<List<String>> fetchShopItems() async {
+    await Future.delayed(const Duration(seconds: 1));
+    return ['sword', 'shield', 'armor'];
+  }
+
+  //  INVENTORY
+  void addItem(String item) {
+    inventory[item] = (inventory[item] ?? 0) + 1;
+  }
+
+  String formatInventory() {
+    if (inventory.isEmpty) return "Inventory kosong";
+
+    return inventory.entries
+        .map((e) => "- ${e.key}: ${e.value}")
+        .join('\n');
   }
 
   @override
@@ -266,9 +237,25 @@ class _DartLabPageState extends State<DartLabPage> {
                   label: const Text('Class + Enum'),
                 ),
                 ElevatedButton.icon(
-                  onPressed: () => demoAsyncAwait(),
+                  onPressed: demoAsyncAwait,
                   icon: const Icon(Icons.cloud_download),
                   label: const Text('Async/Await'),
+                ),
+                ElevatedButton(
+                  onPressed: randomLoot,
+                  child: const Text('🎁 Random Loot'),
+                ),
+                ElevatedButton(
+                  onPressed: attackMonster,
+                  child: const Text('⚔️ Attack'),
+                ),
+                ElevatedButton(
+                  onPressed: healHero,
+                  child: const Text('❤️ Heal'),
+                ),
+                ElevatedButton(
+                  onPressed: loadShop,
+                  child: const Text('🛒 Shop'),
                 ),
                 OutlinedButton.icon(
                   onPressed: () => show('Tekan tombol untuk melihat demo Dart!'),
@@ -284,12 +271,14 @@ class _DartLabPageState extends State<DartLabPage> {
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.06),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.black.withOpacity(0.1)),
                 ),
                 child: SingleChildScrollView(
                   child: SelectableText(
                     output,
-                    style: const TextStyle(fontFamily: 'monospace', height: 1.35),
+                    style: const TextStyle(
+                      fontFamily: 'monospace',
+                      height: 1.35,
+                    ),
                   ),
                 ),
               ),
@@ -298,5 +287,13 @@ class _DartLabPageState extends State<DartLabPage> {
         ),
       ),
     );
+  }
+}
+
+//  EXTENSION
+extension TitleCase on String {
+  String toTitleCase() {
+    if (isEmpty) return this;
+    return this[0].toUpperCase() + substring(1);
   }
 }

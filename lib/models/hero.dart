@@ -19,11 +19,15 @@ class HeroRpg {
   final int baseHp;
   final int baseMp;
 
+  // 🔥 TAMBAHAN (PR JSON)
+  final String? title;
+
   const HeroRpg({
     required this.name,
     required this.job,
     required this.baseHp,
     required this.baseMp,
+    this.title, // tambahan
   });
 
   // Named constructor (contoh)
@@ -31,7 +35,8 @@ class HeroRpg {
       : name = name,
         job = Job.warrior,
         baseHp = 50,
-        baseMp = 20;
+        baseMp = 20,
+        title = null; // tambahan
 
   // Factory: bikin object dari Map/JSON
   factory HeroRpg.fromJson(Map<String, dynamic> json) {
@@ -48,6 +53,7 @@ class HeroRpg {
       job: job,
       baseHp: (json['baseHp'] as int?) ?? 50,
       baseMp: (json['baseMp'] as int?) ?? 20,
+      title: json['title'], // 🔥 tambahan
     );
   }
 
@@ -67,11 +73,23 @@ class HeroRpg {
       job: job,
       baseHp: baseHp + 10 * times,
       baseMp: baseMp + 8 * times,
+      title: title, // tambahan
+    );
+  }
+
+  // ❤️ TAMBAHAN (PR HEAL)
+  HeroRpg heal() {
+    return HeroRpg(
+      name: name,
+      job: job,
+      baseHp: baseHp + 10,
+      baseMp: baseMp,
+      title: title,
     );
   }
 
   @override
   String toString() {
-    return 'HeroRpg(name: $name, job: ${job.label}, hp: $baseHp, mp: $baseMp)';
+    return 'HeroRpg(name: $name, job: ${job.label}, hp: $baseHp, mp: $baseMp, title: ${title ?? "-"})';
   }
 }
