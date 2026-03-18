@@ -70,8 +70,27 @@ class HeroRpg {
     );
   }
 
+  HeroRpg heal(int amount) {
+    return HeroRpg(
+      name: name,
+      job: job,
+      baseHp: baseHp + amount,
+      baseMp: baseMp,
+    );
+  }
+
   @override
   String toString() {
     return 'HeroRpg(name: $name, job: ${job.label}, hp: $baseHp, mp: $baseMp)';
   }
 }
+
+extension StringCase on String {
+  String toTitleCase() {
+    return split(' ').map((part) {
+      if (part.isEmpty) return part;
+      return part[0].toUpperCase() + part.substring(1).toLowerCase();
+    }).join(' ');
+  }
+}
+

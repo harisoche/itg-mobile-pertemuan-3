@@ -11,6 +11,12 @@ class DartLabPage extends StatefulWidget {
 
 class _DartLabPageState extends State<DartLabPage> {
   String output = 'Tekan tombol untuk melihat demo Dart!';
+  HeroRpg currentHero = const HeroRpg(name: 'Rani', job: Job.mage, baseHp: 80, baseMp: 120);
+  final Map<String, int> inventory = {
+    'potion': 2,
+    'gold': 120,
+    'gem': 1,
+  };
 
   void show(String text) {
     setState(() => output = text);
@@ -241,6 +247,8 @@ class _DartLabPageState extends State<DartLabPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const Text('Dart Demo', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -274,6 +282,30 @@ class _DartLabPageState extends State<DartLabPage> {
                   onPressed: () => show('Tekan tombol untuk melihat demo Dart!'),
                   icon: const Icon(Icons.refresh),
                   label: const Text('Clear'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            const Text('RPG Tugas', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: healHero,
+                  icon: const Icon(Icons.healing),
+                  label: const Text('Heal +10 HP'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: showInventory,
+                  icon: const Icon(Icons.inventory),
+                  label: const Text('Inventory'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: fetchShopItems,
+                  icon: const Icon(Icons.store),
+                  label: const Text('Fetch Shop'),
                 ),
               ],
             ),
