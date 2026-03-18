@@ -12,6 +12,8 @@ class DartLabPage extends StatefulWidget {
 class _DartLabPageState extends State<DartLabPage> {
   String output = 'Tekan tombol untuk melihat demo Dart!';
 
+  HeroRpg? currentHero;
+
   void show(String text) {
     setState(() => output = text);
   }
@@ -22,6 +24,7 @@ class _DartLabPageState extends State<DartLabPage> {
     var name = 'Rani'; // String
 
     // final: nilainya hanya bisa di-assign sekali (runtime constant)
+    // lebih dinamis, dia bsia diisi kalo apk nya udah jalan 
     final hp = 100;
 
     // const: benar-benar constant di compile-time
@@ -159,15 +162,15 @@ class _DartLabPageState extends State<DartLabPage> {
     final hero = HeroRpg(name: 'Rani', job: Job.mage, baseHp: 80, baseMp: 120);
     final leveled = hero.levelUp(3);
 
-    // Simulasi data JSON (Map)
-    final json = {
-      'name': 'Bima',
-      'job': 'warrior',
-      'baseHp': 120,
-      'baseMp': 40,
-    };
-
-    final hero2 = HeroRpg.fromJson(json);
+    // JSON dengan title (contoh baru)
+  final jsonWithTitle = {
+    'title': 'Prajurit Legenda',
+    'name': null,  // title akan dipakai
+    'job': 'warrior',
+    'baseHp': 120,
+    'baseMp': 40,
+  };
+    final hero2 = HeroRpg.fromJson(jsonWithTitle);
 
     show([
       '=== Class / Enum / Extension ===',
@@ -207,6 +210,127 @@ class _DartLabPageState extends State<DartLabPage> {
     } catch (e) {
       show('❌ Gagal ambil quest: $e');
     }
+  }
+
+  // Latihan A 
+  // 1. Buat tombol baru: Random Loot
+  // 2. Saat ditekan, pilih loot acak dari list ['gold', 'potion', 'gem', 'scroll']
+  
+  // 6) RANDOM LOOT
+  void demoRandomLoot() {
+  final rng = Random();
+  final loots = ['gold', 'potion', 'gem', 'scroll'];
+  final selected = loots[rng.nextInt(loots.length)];
+  show('🎲 Random Loot: $selected');
+  }
+
+  // Latihan B
+  // 1. Buat function attack(String monster, {int bonus = 0})
+  // 2. Damage acak 1..10 + bonus
+  // 3. Output: ⚔ Attack Goblin, damage: 7
+  // Kriteria: - pakai named parameter bonus
+
+  // 7) ATTACK FUNCTION
+  void demoAttack() {
+  // Fungsi attack
+  String attack(String monster, {int bonus = 0}) {
+    final rng = Random();
+    int damage = rng.nextInt(10) + 1 + bonus; // 1..10 + bonus
+    return '⚔️ Attack $monster, damage: $damage';
+  }
+
+  // Contoh pemanggilan
+  final result1 = attack('Goblin');
+  final result2 = attack('Dragon', bonus: 5);
+  show('$result1\n$result2');
+  }
+
+  // 8) Latihan C: Modifikasi factory fromJson di HeroRpg
+  void demoFromJson() {
+  // Contoh JSON dengan title
+  final json = {
+    'name': 'Rani',
+    'job': 'mage',
+    'baseHp': 80,
+    'baseMp': 120,
+    'title': 'Archmage of Fire',
+  };
+  final hero = HeroRpg.fromJson(json);
+  show('📜 Hero dari JSON:\nNama: ${hero.name}\nJob: ${hero.job.label}\nHP: ${hero.baseHp}\nMP: ${hero.baseMp}\nTitle: ${hero.title ?? 'Tidak ada'}');
+  }
+
+  // Tugas 1: Tambah tombol Heal: tambah HP +10 (buat versi immutable: return Hero baru)
+  // 9) DEMOHEAL
+  void demoHeal() {
+
+  // Jika belum ada hero, buat default
+  currentHero ??= const HeroRpg(
+    name: 'Rani',
+    job: Job.mage,
+    baseHp: 80,
+    baseMp: 120,
+  );
+
+  // Buat hero baru dengan HP +10
+  final newHero = HeroRpg(
+    name: currentHero!.name,
+    job: currentHero!.job,
+    baseHp: currentHero!.baseHp + 10,
+    baseMp: currentHero!.baseMp,
+    title: currentHero!.title,
+  );
+
+  setState(() {
+    currentHero = newHero;
+  });
+
+  show('💚 Hero healed! HP sekarang: ${newHero.baseHp}');
+  }
+
+  // Tugas 2:  Tambah tombol Inventory: Map item → jumlah, tampilkan format rapi
+  // 10) DEMO INVENTORY
+  void demoInventory() {
+  final Map<String, int> inventory = {
+    'gold': 150,
+    'potion': 3,
+    'gem': 1,
+    'scroll': 2,
+  };
+
+  final buffer = StringBuffer('🎒 Inventory:\n');
+  inventory.forEach((item, qty) {
+    buffer.writeln('  - $item: $qty');
+  });
+
+  show(buffer.toString());
+  }
+
+  // Tugas 3: Buat extension untuk String: toTitleCase() lalu pakai untuk nama monster
+  // 11) DEMO STRING EXTENSION
+  void demoStringExtension() {
+  final monster = 'Goblin Warrior';
+  final snake = monster.toSnakeCase();
+  show('🐉 Monster: $monster\n🐍 Snake case: $snake');
+  }
+
+  // Tugas 4: Buat async tambahan:fetchShopItems() dengan Workflow: - Branch: Future.delayed 1 detik
+  Future<void> demoFetchShopItems() async {
+  show('⏳ Mengambil data shop...');
+  try {
+    final items = await fetchShopItems();
+    show('🏪 Item shop:\n${items.join('\n')}');
+  } catch (e) {
+    show('❌ Gagal: $e');
+  }
+  }
+
+  Future<List<String>> fetchShopItems() async {
+  await Future.delayed(const Duration(seconds: 1));
+  final rng = Random();
+  if (rng.nextInt(5) == 0) {
+    throw Exception('Koneksi terputus');
+  }
+  return ['Potion', 'Sword', 'Shield', 'Bow'];
   }
 
   Future<String> fetchQuest() async {
@@ -275,6 +399,43 @@ class _DartLabPageState extends State<DartLabPage> {
                   icon: const Icon(Icons.refresh),
                   label: const Text('Clear'),
                 ),
+                // Tombol latihan A: Random Loot
+                ElevatedButton.icon(
+                  onPressed: demoRandomLoot,
+                  icon: const Icon(Icons.casino),
+                  label: const Text('Random Loot'),
+                ),
+                // Tombol latihan B: Attack Function
+                ElevatedButton.icon(
+                  onPressed: demoAttack,
+                  icon: const Icon(Icons.sports),
+                  label: const Text('Attack Demo'),
+              ),
+              ElevatedButton.icon(
+                onPressed: demoFromJson,
+                icon: const Icon(Icons.code),
+                label: const Text('From JSON'),
+              ),
+              ElevatedButton.icon(
+                onPressed: demoHeal,
+                icon: const Icon(Icons.favorite),
+                label: const Text('Heal +10'),
+              ),
+              ElevatedButton.icon(
+                onPressed: demoInventory,
+                icon: const Icon(Icons.inventory),
+                label: const Text('Show Inventory'),
+              ),
+              ElevatedButton.icon(
+                onPressed: demoStringExtension,
+                icon: const Icon(Icons.text_fields),
+                label: const Text('String Extension'),
+              ),
+              ElevatedButton.icon(
+                onPressed: demoFetchShopItems,
+                icon: const Icon(Icons.store),
+                label: const Text('Fetch Shop Items'),
+              )
               ],
             ),
             const SizedBox(height: 16),
