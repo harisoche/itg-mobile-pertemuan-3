@@ -188,6 +188,96 @@ class _DartLabPageState extends State<DartLabPage> {
     ].join('\n'));
   }
 
+  // 6) RPG PR: Heal immutable + Inventory Map + toTitleCase + async shop items
+  void demoHeal() {
+    final hero = HeroRpg(name: 'Rani', job: Job.mage, baseHp: 80, baseMp: 120);
+    final healed = hero.heal();
+    show([
+      '=== Heal (Immutable) ===',
+      'Hero awal: $hero',
+      'Hero healed: $healed',
+      '',
+      'Catatan:',
+      '- method heal() return HeroRpg baru',
+      '- objek lama tetap tidak berubah',
+    ].join('\n'));
+  }
+
+  void demoInventory() {
+    final inventory = {
+      'Potion': 5,
+      'Elixir': 2,
+      'Arrow': 20,
+      'Rope': 1,
+    };
+    final inventoryLines = inventory.entries
+        .map((entry) => '- ${entry.key}: ${entry.value}')
+        .join('\n');
+    show([
+      '=== Inventory Map ===',
+      inventoryLines,
+      '',
+      'Catatan:',
+      '- Map<String, int> untuk item dan jumlah',
+      '- Tampilkan format rapi dengan map/entries',
+    ].join('\n'));
+  }
+
+  void demoTitleCaseMonsters() {
+    final monsters = ['slime', 'goblin', 'dark wolf'];
+    final monstersTitle = monsters.map((m) => m.toTitleCase()).join(', ');
+    show([
+      '=== Extension String.toTitleCase() ===',
+      'Monsters: $monsters',
+      'TitleCase: $monstersTitle',
+      '',
+      'Catatan:',
+      '- extension method bisa dipakai di semua String',
+    ].join('\n'));
+  }
+
+  void demoRpgImprovements() {
+    final hero = HeroRpg(name: 'Rani', job: Job.mage, baseHp: 80, baseMp: 120);
+    final healed = hero.heal();
+    final inventory = {
+      'Potion': 5,
+      'Elixir': 2,
+      'Arrow': 20,
+    };
+    final inventoryLines = inventory.entries
+        .map((entry) => '- ${entry.key}: ${entry.value}')
+        .join('\n');
+    final monsters = ['slime', 'goblin', 'dark wolf'];
+    final monstersTitle = monsters.map((m) => m.toTitleCase()).join(', ');
+    show([
+      '=== RPG PR Improvements ===',
+      'Hero heal: $healed',
+      'Inventory:',
+      inventoryLines,
+      'Monsters (title): $monstersTitle',
+    ].join('\n'));
+  }
+
+  Future<void> demoFetchShopItems() async {
+    show('⏳ Mengambil item shop...');
+    await Future.delayed(const Duration(seconds: 1));
+    final shopItems = {
+      'Basic Potion': 20,
+      'Mana Scroll': 10,
+      'Iron Sword': 1,
+    };
+
+    show([
+      '=== Async Shop Items ===',
+      'Shop items loaded (after 1 detik):',
+      for (final entry in shopItems.entries) '• ${entry.key}: ${entry.value}',
+      '',
+      'Catatan:',
+      '- Future.delayed(1 detik) untuk simulasi API',
+      '- async/await tetap responsif',
+    ].join('\n'));
+  }
+
   // 5) ASYNC/AWAIT + TRY/CATCH
   Future<void> demoAsyncAwait() async {
     show('⏳ Mengambil quest dari server...');
@@ -264,6 +354,31 @@ class _DartLabPageState extends State<DartLabPage> {
                   onPressed: demoClasses,
                   icon: const Icon(Icons.shield),
                   label: const Text('Class + Enum'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: demoHeal,
+                  icon: const Icon(Icons.healing),
+                  label: const Text('Heal +10'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: demoInventory,
+                  icon: const Icon(Icons.inventory),
+                  label: const Text('Inventory Map'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: demoTitleCaseMonsters,
+                  icon: const Icon(Icons.text_fields),
+                  label: const Text('Title Case'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: demoRpgImprovements,
+                  icon: const Icon(Icons.auto_awesome),
+                  label: const Text('RPG PR Summary'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () => demoFetchShopItems(),
+                  icon: const Icon(Icons.store),
+                  label: const Text('Shop Items'),
                 ),
                 ElevatedButton.icon(
                   onPressed: () => demoAsyncAwait(),
