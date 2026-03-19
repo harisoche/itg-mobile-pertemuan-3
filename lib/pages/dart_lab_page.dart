@@ -16,27 +16,26 @@ class _DartLabPageState extends State<DartLabPage> {
     setState(() => output = text);
   }
 
+  void getRandomLoot() {
+    List<String> lootList = ['gold', 'potion', 'gem', 'scroll'];
+    int randomIndex = Random().nextInt(lootList.length);
+    String dapetLoot = lootList[randomIndex];
+
+    show([
+      '=== Random Loot ===',
+      'Membuka peti harta karun...',
+      'Selamat! Kamu mendapatkan: $dapetLoot 🎉',
+    ].join('\n'));
+  }
+
   // 1) VAR / FINAL / CONST + NULL SAFETY
   void demoVariablesAndNullSafety() {
-    // var: tipe bisa "di-infer" oleh Dart
-    var name = 'Rani'; // String
-
-    // final: nilainya hanya bisa di-assign sekali (runtime constant)
+    var name = 'Rani'; 
     final hp = 100;
-
-    // const: benar-benar constant di compile-time
     const maxLevel = 10;
-
-    // Null safety: tipe? artinya boleh null
     String? guild;
-
-    // Operator ?? (kalau null, pakai nilai pengganti)
     final guildName = guild ?? 'No Guild';
-
-    // Operator ?. (akses property/method kalau tidak null)
-    final guildUpper = guildName.toUpperCase(); // hasilnya String? (bisa null)
-
-    // Contoh list yang boleh menyimpan null
+    final guildUpper = guildName.toUpperCase(); 
     final List<int?> potions = [1, null, 3];
 
     show([
@@ -48,185 +47,103 @@ class _DartLabPageState extends State<DartLabPage> {
       'guildName (??): $guildName',
       'guildUpper (?.): $guildUpper',
       'potions: $potions',
-      '',
-      'Catatan:',
-      '- var = Dart menebak tipe',
-      '- final = sekali assign (runtime)',
-      '- const = compile-time constant',
-      '- String? = boleh null',
     ].join('\n'));
   }
 
-  // 2) FUNCTION: positional, named, optional, arrow, higher-order
+  // 2) FUNCTION
   void demoFunctions() {
-    int add(int a, int b) => a + b; // arrow function
-
-    // optional positional parameter [ ... ]
+    int add(int a, int b) => a + b; 
     String greet(String name, [String? title]) {
       if (title == null) return 'Halo $name!';
       return 'Halo $title $name!';
     }
-
-    // named parameter { ... } + required
     String castSpell({required String spell, int manaCost = 10}) {
       return '🪄 Cast $spell (mana -$manaCost)';
     }
-
-    // function sebagai parameter
     int applyTwice(int value, int Function(int) f) {
       return f(f(value));
     }
 
-    final resultAdd = add(2, 3);
-    final hello1 = greet('Rani');
-    final hello2 = greet('Rani', 'Mage');
-    final spell1 = castSpell(spell: 'Fireball');
-    final spell2 = castSpell(spell: 'Heal', manaCost: 5);
-    final doubledTwice = applyTwice(3, (x) => x * 2); // 3 -> 6 -> 12
+    String attack(String monster, {int bonus = 0}) {
+      int damage = Random().nextInt(10) + 1 + bonus;
+      return '⚔️ Attack $monster, damage: $damage';
+    }
 
     show([
       '=== Functions ===',
-      'add(2,3) => $resultAdd',
-      'greet("Rani") => $hello1',
-      'greet("Rani","Mage") => $hello2',
-      'castSpell(spell:"Fireball") => $spell1',
-      'castSpell(spell:"Heal", manaCost:5) => $spell2',
-      'applyTwice(3, x*2) => $doubledTwice',
+      'add(2,3) => ${add(2, 3)}',
+      'greet("Rani") => ${greet('Rani')}',
+      'castSpell(spell:"Fireball") => ${castSpell(spell: 'Fireball')}',
       '',
-      'Catatan:',
-      '- [param] = optional positional',
-      '- {param} = named parameter',
-      '- required = wajib diisi',
-      '- Function bisa jadi parameter',
+      '=== Attack Demo ===',
+      attack('Goblin'), 
+      attack('Dragon', bonus: 5), 
     ].join('\n'));
   }
 
-  // 3) COLLECTION: List/Map + map/where/fold + collection if/for
+  // 3) COLLECTION
   void demoCollections() {
     final rng = Random();
-
-    // List
     final monsters = ['Slime', 'Goblin', 'Wolf', 'Dragon'];
-
-    // Ambil monster yang panjang namanya > 4
     final strongNames = monsters.where((m) => m.length > 4).toList();
 
-    // Ubah jadi "Monster: X"
-    final labeled = monsters.map((m) => 'Monster: $m').toList();
-
-    // Total damage acak untuk 3 hit
-    final hits = List.generate(3, (_) => rng.nextInt(10) + 1); // 1..10
-    final totalDamage = hits.fold<int>(0, (sum, x) => sum + x);
-
-    // Map
-    final loot = {
-      'gold': 120,
-      'potion': 2,
-      'gem': 1,
-    };
-
-    // Collection if/for (seru buat bikin list dinamis)
-    final level = rng.nextInt(5) + 1; // 1..5
-    final rewards = [
-      '🎁 Daily Reward',
-      if (level >= 3) '⭐ Bonus Reward (level >= 3)',
-      for (final item in loot.keys) '• $item',
-    ];
-
+    final rawMonsters = ['orc', 'troll', 'skeleton', 'zombie'];
+    final formattedMonsters = rawMonsters.map((m) => m.toTitleCase()).toList();
+    
     show([
-      '=== Collections (List/Map) ===',
+      '=== Collections ===',
       'monsters: $monsters',
       'where(length>4): $strongNames',
-      'map(label): $labeled',
-      'hits: $hits',
-      'totalDamage (fold): $totalDamage',
       '',
-      'loot map: $loot',
-      'random level: $level',
-      'rewards:',
-      ...rewards,
-      '',
-      'Catatan:',
-      '- where = filter',
-      '- map = transform',
-      '- fold = reduce + akumulasi',
-      '- collection if/for = list dinamis',
+      '=== Extension: toTitleCase() ===',
+      'Nama Asli (Kecil): $rawMonsters',
+      'Setelah toTitleCase: $formattedMonsters',
     ].join('\n'));
   }
 
-  // 4) CLASS + CONSTRUCTOR + FACTORY + GETTER + ENUM + EXTENSION
+  // 4) CLASS
   void demoClasses() {
     final hero = HeroRpg(name: 'Rani', job: Job.mage, baseHp: 80, baseMp: 120);
-    final leveled = hero.levelUp(3);
-
-    // Simulasi data JSON (Map)
+    
     final json = {
+      'title': 'Lord', 
       'name': 'Bima',
       'job': 'warrior',
       'baseHp': 120,
       'baseMp': 40,
     };
-
     final hero2 = HeroRpg.fromJson(json);
 
     show([
-      '=== Class / Enum / Extension ===',
+      '=== Class ===',
       'hero: $hero',
-      'hero.power => ${hero.power}',
-      'leveled (levelUp 3x): $leveled',
+      'power: ${hero.power}',
       '',
-      'fromJson:',
+      '=== Parse JSON Title ===',
       'hero2: $hero2',
-      'hero2.jobLabel => ${hero2.job.label}',
-      '',
-      'Catatan:',
-      '- constructor = cara membuat object',
-      '- factory fromJson = bikin object dari Map',
-      '- getter (power) = property hasil hitungan',
-      '- enum = pilihan tetap (job)',
-      '- extension = nambah kemampuan ke tipe (job.label)',
     ].join('\n'));
   }
 
-  // 5) ASYNC/AWAIT + TRY/CATCH
+  // 5) ASYNC/AWAIT
   Future<void> demoAsyncAwait() async {
     show('⏳ Mengambil quest dari server...');
-
-    try {
-      final quest = await fetchQuest();
-      show([
-        '=== Async/Await ===',
-        'Quest didapat!',
-        '• $quest',
-        '',
-        'Catatan:',
-        '- Future = nilai yang datang belakangan',
-        '- await = tunggu Future selesai',
-        '- try/catch = tangani error',
-      ].join('\n'));
-    } catch (e) {
-      show('❌ Gagal ambil quest: $e');
-    }
+    await Future.delayed(const Duration(seconds: 1));
+    show('=== Async/Await ===\nQuest: Kalahkan 3 Goblin');
   }
 
-  Future<String> fetchQuest() async {
-    // Simulasi "internet" dengan delay
+  Future<List<String>> fetchShopItems() async {
     await Future.delayed(const Duration(seconds: 1));
+    return ['🗡️ Iron Sword (150G)', '🛡️ Wooden Shield (80G)', '🧪 Health Potion (25G)'];
+  }
 
-    // Kadang gagal biar seru
-    final rng = Random();
-    if (rng.nextInt(5) == 0) {
-      throw Exception('Server sedang tidur 😴');
-    }
-
-    const quests = [
-      'Kalahkan 3 Goblin',
-      'Cari 2 Potion',
-      'Lindungi desa dari Wolf',
-      'Temukan Gem tersembunyi',
-    ];
-
-    return quests[rng.nextInt(quests.length)];
+  Future<void> demoShop() async {
+    show('⏳ Berjalan ke toko item...');
+    final items = await fetchShopItems(); 
+    show([
+      '=== Shop Items ===',
+      'Barang yang tersedia di toko:',
+      ...items.map((item) => '• $item'),
+    ].join('\n'));
   }
 
   @override
@@ -245,6 +162,11 @@ class _DartLabPageState extends State<DartLabPage> {
               spacing: 8,
               runSpacing: 8,
               children: [
+                ElevatedButton.icon(
+                  onPressed: getRandomLoot,
+                  icon: const Icon(Icons.card_giftcard),
+                  label: const Text('Random Loot'),
+                ),
                 ElevatedButton.icon(
                   onPressed: demoVariablesAndNullSafety,
                   icon: const Icon(Icons.bolt),
@@ -266,9 +188,14 @@ class _DartLabPageState extends State<DartLabPage> {
                   label: const Text('Class + Enum'),
                 ),
                 ElevatedButton.icon(
-                  onPressed: () => demoAsyncAwait(),
+                  onPressed: demoAsyncAwait,
                   icon: const Icon(Icons.cloud_download),
                   label: const Text('Async/Await'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: demoShop,
+                  icon: const Icon(Icons.store),
+                  label: const Text('Buka Toko'),
                 ),
                 OutlinedButton.icon(
                   onPressed: () => show('Tekan tombol untuk melihat demo Dart!'),
@@ -298,5 +225,12 @@ class _DartLabPageState extends State<DartLabPage> {
         ),
       ),
     );
+  }
+}
+
+extension StringCasingExtension on String {
+  String toTitleCase() {
+    if (this.isEmpty) return this;
+    return '${this[0].toUpperCase()}${this.substring(1).toLowerCase()}';
   }
 }
