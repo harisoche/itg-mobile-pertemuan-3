@@ -229,6 +229,58 @@ class _DartLabPageState extends State<DartLabPage> {
     return quests[rng.nextInt(quests.length)];
   }
 
+  Future<List<String>> fetchShopItems() async {
+    await Future.delayed(const Duration(seconds: 1));
+    return ['Potion', 'Sword', 'Shield'];
+  }
+
+  void demoHeal() {
+    final hero = HeroRpg(name: 'Rani', job: Job.mage, baseHp: 80, baseMp: 120);
+    final healedHero = hero.heal(10);
+
+    show([
+      '=== Heal (immutable) ===',
+      'Hero sebelum heal: $hero',
+      'Hero setelah heal +10: $healedHero',
+      '',
+      'Catatan:',
+      '- edit object immutable: return baru',
+      '- method: HeroRpg.heal(int amount)',
+    ].join('\n'));
+  }
+
+  void demoInventory() {
+    final inventory = {
+      'Potion': 3,
+      'Elixir': 1,
+      'Arrow': 12,
+    };
+
+    show([
+      '=== Inventory (Map) ===',
+      ...inventory.entries.map((entry) => '• ${entry.key}: ${entry.value}'),
+      '',
+      'Catatan:',
+      '- Map<String, int> = item -> jumlah',
+      '- inventory.entries untuk iterasi pasangan key/value',
+    ].join('\n'));
+  }
+
+  Future<void> demoShopItems() async {
+    show('⏳ Mengambil shop items...');
+    final items = await fetchShopItems();
+
+    show([
+      '=== Shop Items (async) ===',
+      'Dapat dari server (delay 1 detik):',
+      ...items.map((item) => '• $item'),
+      '',
+      'Catatan:',
+      '- Future.delayed(1 detik)',
+      '- await untuk menunggu hasil',
+    ].join('\n'));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -241,35 +293,57 @@ class _DartLabPageState extends State<DartLabPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 ElevatedButton.icon(
                   onPressed: demoVariablesAndNullSafety,
                   icon: const Icon(Icons.bolt),
                   label: const Text('Variables + Null'),
                 ),
+                const SizedBox(height: 8),
                 ElevatedButton.icon(
                   onPressed: demoFunctions,
                   icon: const Icon(Icons.functions),
                   label: const Text('Functions'),
                 ),
+                const SizedBox(height: 8),
                 ElevatedButton.icon(
                   onPressed: demoCollections,
                   icon: const Icon(Icons.list_alt),
                   label: const Text('Collections'),
                 ),
+                const SizedBox(height: 8),
                 ElevatedButton.icon(
                   onPressed: demoClasses,
                   icon: const Icon(Icons.shield),
                   label: const Text('Class + Enum'),
                 ),
+                const SizedBox(height: 8),
                 ElevatedButton.icon(
-                  onPressed: () => demoAsyncAwait(),
+                  onPressed: demoAsyncAwait,
                   icon: const Icon(Icons.cloud_download),
                   label: const Text('Async/Await'),
                 ),
+                const SizedBox(height: 8),
+                ElevatedButton.icon(
+                  onPressed: demoHeal,
+                  icon: const Icon(Icons.favorite),
+                  label: const Text('Heal'),
+                ),
+                const SizedBox(height: 8),
+                ElevatedButton.icon(
+                  onPressed: demoInventory,
+                  icon: const Icon(Icons.inventory),
+                  label: const Text('Inventory'),
+                ),
+                const SizedBox(height: 8),
+                ElevatedButton.icon(
+                  onPressed: demoShopItems,
+                  icon: const Icon(Icons.store),
+                  label: const Text('Shop Items'),
+                ),
+                const SizedBox(height: 8),
                 OutlinedButton.icon(
                   onPressed: () => show('Tekan tombol untuk melihat demo Dart!'),
                   icon: const Icon(Icons.refresh),
@@ -298,5 +372,15 @@ class _DartLabPageState extends State<DartLabPage> {
         ),
       ),
     );
+  }
+}
+
+extension StringTitleCase on String {
+  String toTitleCase() {
+    if (isEmpty) return this;
+    return split(' ').map((word) {
+      if (word.isEmpty) return word;
+      return word[0].toUpperCase() + word.substring(1).toLowerCase();
+    }).join(' ');
   }
 }
