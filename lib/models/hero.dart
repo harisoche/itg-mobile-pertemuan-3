@@ -28,10 +28,10 @@ class HeroRpg {
 
   // Named constructor (contoh)
   const HeroRpg.novice(String name)
-      : name = name,
-        job = Job.warrior,
-        baseHp = 50,
-        baseMp = 20;
+    : name = name,
+      job = Job.warrior,
+      baseHp = 50,
+      baseMp = 20;
 
   // Factory: bikin object dari Map/JSON
   factory HeroRpg.fromJson(Map<String, dynamic> json) {
@@ -43,8 +43,12 @@ class HeroRpg {
       _ => Job.warrior,
     };
 
+    final title = json['title'] as String?;
+    final rawName = (json['name'] as String?) ?? 'Unknown';
+    final finalName = title != null ? '[$title] $rawName' : rawName;
+
     return HeroRpg(
-      name: (json['name'] as String?) ?? 'Unknown',
+      name: finalName,
       job: job,
       baseHp: (json['baseHp'] as int?) ?? 50,
       baseMp: (json['baseMp'] as int?) ?? 20,
@@ -67,6 +71,16 @@ class HeroRpg {
       job: job,
       baseHp: baseHp + 10 * times,
       baseMp: baseMp + 8 * times,
+    );
+  }
+
+  // Method baru untuk Heal (Tantangan 1)
+  HeroRpg heal(int amount) {
+    return HeroRpg(
+      name: name,
+      job: job,
+      baseHp: baseHp + amount,
+      baseMp: baseMp,
     );
   }
 
