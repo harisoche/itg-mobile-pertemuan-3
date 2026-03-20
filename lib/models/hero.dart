@@ -69,6 +69,14 @@ class HeroRpg {
       baseMp: baseMp + 8 * times,
     );
   }
+  HeroRpg heal(int amount) {
+    return HeroRpg(
+      name: name,
+      job: job,
+      baseHp: baseHp + amount,
+      baseMp: baseMp,
+    );
+  }
 
   @override
   String toString() {
