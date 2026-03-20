@@ -13,6 +13,16 @@ extension JobLabel on Job {
   }
 }
 
+extension TitleCase on String {
+  String toTitleCase() {
+    if (isEmpty) return this;
+    return split(' ').map((word) {
+      if (word.isEmpty) return word;
+      return word[0].toUpperCase() + word.substring(1).toLowerCase();
+    }).join(' ');
+  }
+}
+
 class HeroRpg {
   final String name;
   final Job job;
@@ -67,6 +77,16 @@ class HeroRpg {
       job: job,
       baseHp: baseHp + 10 * times,
       baseMp: baseMp + 8 * times,
+    );
+  }
+
+  // Immutable heal: kembalikan HeroRpg baru dengan HP +10
+  HeroRpg heal() {
+    return HeroRpg(
+      name: name,
+      job: job,
+      baseHp: baseHp + 10,
+      baseMp: baseMp,
     );
   }
 
