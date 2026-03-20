@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../models/hero.dart';
+import '../extensions/string_extension.dart';
 
 class DartLabPage extends StatefulWidget {
   const DartLabPage({super.key});
@@ -102,17 +103,21 @@ class _DartLabPageState extends State<DartLabPage> {
   }
 
   // 3) COLLECTION: List/Map + map/where/fold + collection if/for
+  //    + Challenge 3: String extension toTitleCase() untuk monster ke-4
   void demoCollections() {
     final rng = Random();
 
-    // List
-    final monsters = ['Slime', 'Goblin', 'Wolf', 'Dragon'];
+    // List — monster ke-4 sengaja lowercase untuk demo toTitleCase()
+    final monsters = ['Slime', 'Goblin', 'Wolf', 'fire dragon'];
+
+    // Pakai extension toTitleCase() pada monster ke-4
+    final monster4Title = monsters[3].toTitleCase();
 
     // Ambil monster yang panjang namanya > 4
     final strongNames = monsters.where((m) => m.length > 4).toList();
 
     // Ubah jadi "Monster: X"
-    final labeled = monsters.map((m) => 'Monster: $m').toList();
+    final labeled = monsters.map((m) => 'Monster: ${m.toTitleCase()}').toList();
 
     // Total damage acak untuk 3 hit
     final hits = List.generate(3, (_) => rng.nextInt(10) + 1); // 1..10
@@ -136,8 +141,9 @@ class _DartLabPageState extends State<DartLabPage> {
     show([
       '=== Collections (List/Map) ===',
       'monsters: $monsters',
+      '🆕 monster[3].toTitleCase() => $monster4Title',
       'where(length>4): $strongNames',
-      'map(label): $labeled',
+      'map(label+titleCase): $labeled',
       'hits: $hits',
       'totalDamage (fold): $totalDamage',
       '',
@@ -151,6 +157,7 @@ class _DartLabPageState extends State<DartLabPage> {
       '- map = transform',
       '- fold = reduce + akumulasi',
       '- collection if/for = list dinamis',
+      '- toTitleCase() = String extension!',
     ].join('\n'));
   }
 
@@ -229,6 +236,142 @@ class _DartLabPageState extends State<DartLabPage> {
     return quests[rng.nextInt(quests.length)];
   }
 
+  // ======================================================================
+  // CHALLENGE 1: Heal Button — tambah HP +10 (immutable, return Hero baru)
+  // ======================================================================
+  void demoHeal() {
+    final hero = HeroRpg(name: 'Rani', job: Job.mage, baseHp: 80, baseMp: 120);
+    final healed = hero.heal(10);
+
+    show([
+      '=== 💚 Heal Demo (Immutable) ===',
+      '',
+      'Sebelum Heal:',
+      '  $hero',
+      '  HP: ${hero.baseHp}',
+      '',
+      'Sesudah Heal (+10):',
+      '  $healed',
+      '  HP: ${healed.baseHp}',
+      '',
+      'Apakah object sama? ${identical(hero, healed) ? "Ya" : "Tidak"}',
+      '',
+      'Catatan:',
+      '- heal(10) mengembalikan Hero BARU',
+      '- Object lama tidak berubah (immutable)',
+      '- Ini best practice di Dart/Flutter!',
+    ].join('\n'));
+  }
+
+  // ======================================================================
+  // CHALLENGE 2: Inventory Button — Map item → jumlah, tampilkan format rapi
+  // ======================================================================
+  void demoInventory() {
+    final inventory = <String, int>{
+      'Health Potion': 5,
+      'Mana Potion': 3,
+      'Iron Sword': 1,
+      'Wooden Shield': 1,
+      'Bomb': 7,
+      'Gem': 2,
+    };
+
+    // Format rapi: setiap item ditampilkan dengan emoji & jumlah
+    final formatted = inventory.entries.map((e) {
+      final icon = switch (e.key) {
+        'Health Potion' => '❤️',
+        'Mana Potion' => '💙',
+        'Iron Sword' => '⚔️',
+        'Wooden Shield' => '🛡️',
+        'Bomb' => '💣',
+        'Gem' => '💎',
+        _ => '📦',
+      };
+      return '  $icon ${e.key} x${e.value}';
+    }).toList();
+
+    // Hitung total item
+    final totalItems = inventory.values.fold<int>(0, (sum, qty) => sum + qty);
+
+    // Hitung jumlah jenis item unik
+    final uniqueTypes = inventory.length;
+
+    show([
+      '=== 🎒 Inventory ===',
+      '',
+      '📋 Daftar Item:',
+      ...formatted,
+      '',
+      '━━━━━━━━━━━━━━━━━━━━━━━━━',
+      '📊 Total item: $totalItems',
+      '📦 Jenis item: $uniqueTypes',
+      '',
+      'Catatan:',
+      '- Map<String, int> = pasangan key-value',
+      '- entries.map() = transform setiap entry',
+      '- values.fold() = hitung total',
+    ].join('\n'));
+  }
+
+  // ======================================================================
+  // CHALLENGE 4: Async fetchShopItems() + Future.delayed 1 detik
+  // ======================================================================
+  Future<Map<String, int>> fetchShopItems() async {
+    // Simulasi fetch dari "server" dengan delay 1 detik
+    await Future.delayed(const Duration(seconds: 1));
+
+    return {
+      'Iron Sword': 100,
+      'Steel Armor': 250,
+      'Health Potion': 25,
+      'Mana Potion': 30,
+      'Fire Scroll': 75,
+      'Lucky Charm': 500,
+    };
+  }
+
+  Future<void> demoShop() async {
+    show('⏳ Mengambil daftar toko...');
+
+    try {
+      final shopItems = await fetchShopItems();
+
+      // Format rapi dengan emoji
+      final formatted = shopItems.entries.map((e) {
+        final icon = switch (e.key) {
+          'Iron Sword' => '⚔️',
+          'Steel Armor' => '🛡️',
+          'Health Potion' => '❤️',
+          'Mana Potion' => '💙',
+          'Fire Scroll' => '🔥',
+          'Lucky Charm' => '🍀',
+          _ => '📦',
+        };
+        return '  $icon ${e.key} — 💰 ${e.value} gold';
+      }).toList();
+
+      final totalValue =
+          shopItems.values.fold<int>(0, (sum, price) => sum + price);
+
+      show([
+        '=== 🏪 Shop Items ===',
+        '',
+        '🛒 Barang yang dijual:',
+        ...formatted,
+        '',
+        '━━━━━━━━━━━━━━━━━━━━━━━━━',
+        '💰 Total nilai toko: $totalValue gold',
+        '',
+        'Catatan:',
+        '- fetchShopItems() = Future<Map<String, int>>',
+        '- Future.delayed(1 detik) = simulasi network',
+        '- await = tunggu data selesai di-fetch',
+      ].join('\n'));
+    } catch (e) {
+      show('❌ Gagal memuat toko: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -270,6 +413,34 @@ class _DartLabPageState extends State<DartLabPage> {
                   icon: const Icon(Icons.cloud_download),
                   label: const Text('Async/Await'),
                 ),
+                // ===== CHALLENGE BUTTONS =====
+                ElevatedButton.icon(
+                  onPressed: demoHeal,
+                  icon: const Icon(Icons.favorite),
+                  label: const Text('Heal'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Theme.of(context).colorScheme.primaryContainer,
+                  ),
+                ),
+                ElevatedButton.icon(
+                  onPressed: demoInventory,
+                  icon: const Icon(Icons.inventory_2),
+                  label: const Text('Inventory'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Theme.of(context).colorScheme.primaryContainer,
+                  ),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () => demoShop(),
+                  icon: const Icon(Icons.storefront),
+                  label: const Text('Shop'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Theme.of(context).colorScheme.primaryContainer,
+                  ),
+                ),
                 OutlinedButton.icon(
                   onPressed: () => show('Tekan tombol untuk melihat demo Dart!'),
                   icon: const Icon(Icons.refresh),
@@ -282,9 +453,9 @@ class _DartLabPageState extends State<DartLabPage> {
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.06),
+                  color: Colors.black.withValues(alpha: 0.06),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.black.withOpacity(0.1)),
+                  border: Border.all(color: Colors.black.withValues(alpha: 0.1)),
                 ),
                 child: SingleChildScrollView(
                   child: SelectableText(
