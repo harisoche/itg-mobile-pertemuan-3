@@ -2,6 +2,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import '../models/hero.dart';
 
+extension StringTitleCase on String {
+  String toTitleCase() {
+    if (isEmpty) return this;
+    return split(' ').map((word) => word.isEmpty ? word : word[0].toUpperCase() + word.substring(1).toLowerCase()).join(' ');
+  }
+}
+
 class DartLabPage extends StatefulWidget {
   const DartLabPage({super.key});
 
@@ -11,32 +18,19 @@ class DartLabPage extends StatefulWidget {
 
 class _DartLabPageState extends State<DartLabPage> {
   String output = 'Tekan tombol untuk melihat demo Dart!';
+  HeroRpg hero = HeroRpg(name: 'Rani', job: Job.warrior, baseHp: 50, baseMp: 20, inventory: {'Potion': 3, 'Elixir': 1, 'Gold': 100});
 
   void show(String text) {
     setState(() => output = text);
   }
 
-  // 1) VAR / FINAL / CONST + NULL SAFETY
   void demoVariablesAndNullSafety() {
-    // var: tipe bisa "di-infer" oleh Dart
-    var name = 'Rani'; // String
-
-    // final: nilainya hanya bisa di-assign sekali (runtime constant)
+    var name = 'Rani';
     final hp = 100;
-
-    // const: benar-benar constant di compile-time
     const maxLevel = 10;
-
-    // Null safety: tipe? artinya boleh null
     String? guild;
-
-    // Operator ?? (kalau null, pakai nilai pengganti)
     final guildName = guild ?? 'No Guild';
-
-    // Operator ?. (akses property/method kalau tidak null)
-    final guildUpper = guildName.toUpperCase(); // hasilnya String? (bisa null)
-
-    // Contoh list yang boleh menyimpan null
+    final guildUpper = guildName.toUpperCase();
     final List<int?> potions = [1, null, 3];
 
     show([
@@ -57,22 +51,15 @@ class _DartLabPageState extends State<DartLabPage> {
     ].join('\n'));
   }
 
-  // 2) FUNCTION: positional, named, optional, arrow, higher-order
   void demoFunctions() {
-    int add(int a, int b) => a + b; // arrow function
-
-    // optional positional parameter [ ... ]
+    int add(int a, int b) => a + b;
     String greet(String name, [String? title]) {
       if (title == null) return 'Halo $name!';
       return 'Halo $title $name!';
     }
-
-    // named parameter { ... } + required
     String castSpell({required String spell, int manaCost = 10}) {
       return '🪄 Cast $spell (mana -$manaCost)';
     }
-
-    // function sebagai parameter
     int applyTwice(int value, int Function(int) f) {
       return f(f(value));
     }
@@ -82,7 +69,7 @@ class _DartLabPageState extends State<DartLabPage> {
     final hello2 = greet('Rani', 'Mage');
     final spell1 = castSpell(spell: 'Fireball');
     final spell2 = castSpell(spell: 'Heal', manaCost: 5);
-    final doubledTwice = applyTwice(3, (x) => x * 2); // 3 -> 6 -> 12
+    final doubledTwice = applyTwice(3, (x) => x * 2);
 
     show([
       '=== Functions ===',
@@ -101,41 +88,20 @@ class _DartLabPageState extends State<DartLabPage> {
     ].join('\n'));
   }
 
-  // 3) COLLECTION: List/Map + map/where/fold + collection if/for
   void demoCollections() {
     final rng = Random();
-
-    // List
     final monsters = ['Slime', 'Goblin', 'Wolf', 'Dragon'];
-
-    // Ambil monster yang panjang namanya > 4
-    final strongNames = monsters.where((m) => m.length > 4).toList();
-
-    // Ubah jadi "Monster: X"
-    final labeled = monsters.map((m) => 'Monster: $m').toList();
-
-    // Total damage acak untuk 3 hit
-    final hits = List.generate(3, (_) => rng.nextInt(10) + 1); // 1..10
+    final strongNames = monsters.where((m) => m.length > 4).map((m) => m.toTitleCase()).toList();
+    final labeled = monsters.map((m) => 'Monster: ${m.toTitleCase()}').toList();
+    final hits = List.generate(3, (_) => rng.nextInt(10) + 1);
     final totalDamage = hits.fold<int>(0, (sum, x) => sum + x);
-
-    // Map
-    final loot = {
-      'gold': 120,
-      'potion': 2,
-      'gem': 1,
-    };
-
-    // Collection if/for (seru buat bikin list dinamis)
-    final level = rng.nextInt(5) + 1; // 1..5
-    final rewards = [
-      '🎁 Daily Reward',
-      if (level >= 3) '⭐ Bonus Reward (level >= 3)',
-      for (final item in loot.keys) '• $item',
-    ];
+    final loot = {'gold': 120, 'potion': 2, 'gem': 1};
+    final level = rng.nextInt(5) + 1;
+    final rewards = ['🎁 Daily Reward', if (level >= 3) '⭐ Bonus Reward (level >= 3)', for (final item in loot.keys) '• $item'];
 
     show([
       '=== Collections (List/Map) ===',
-      'monsters: $monsters',
+      'monsters: ${monsters.map((m) => m.toTitleCase()).toList()}',
       'where(length>4): $strongNames',
       'map(label): $labeled',
       'hits: $hits',
@@ -154,25 +120,16 @@ class _DartLabPageState extends State<DartLabPage> {
     ].join('\n'));
   }
 
-  // 4) CLASS + CONSTRUCTOR + FACTORY + GETTER + ENUM + EXTENSION
   void demoClasses() {
-    final hero = HeroRpg(name: 'Rani', job: Job.mage, baseHp: 80, baseMp: 120);
-    final leveled = hero.levelUp(3);
-
-    // Simulasi data JSON (Map)
-    final json = {
-      'name': 'Bima',
-      'job': 'warrior',
-      'baseHp': 120,
-      'baseMp': 40,
-    };
-
+    final heroInstance = HeroRpg(name: 'Rani', job: Job.mage, baseHp: 80, baseMp: 120);
+    final leveled = heroInstance.levelUp(3);
+    final json = {'name': 'Bima', 'job': 'warrior', 'baseHp': 120, 'baseMp': 40};
     final hero2 = HeroRpg.fromJson(json);
 
     show([
       '=== Class / Enum / Extension ===',
-      'hero: $hero',
-      'hero.power => ${hero.power}',
+      'hero: $heroInstance',
+      'hero.power => ${heroInstance.power}',
       'leveled (levelUp 3x): $leveled',
       '',
       'fromJson:',
@@ -188,10 +145,8 @@ class _DartLabPageState extends State<DartLabPage> {
     ].join('\n'));
   }
 
-  // 5) ASYNC/AWAIT + TRY/CATCH
   Future<void> demoAsyncAwait() async {
     show('⏳ Mengambil quest dari server...');
-
     try {
       final quest = await fetchQuest();
       show([
@@ -210,23 +165,37 @@ class _DartLabPageState extends State<DartLabPage> {
   }
 
   Future<String> fetchQuest() async {
-    // Simulasi "internet" dengan delay
     await Future.delayed(const Duration(seconds: 1));
-
-    // Kadang gagal biar seru
     final rng = Random();
-    if (rng.nextInt(5) == 0) {
-      throw Exception('Server sedang tidur 😴');
-    }
-
-    const quests = [
-      'Kalahkan 3 Goblin',
-      'Cari 2 Potion',
-      'Lindungi desa dari Wolf',
-      'Temukan Gem tersembunyi',
-    ];
-
+    if (rng.nextInt(5) == 0) throw Exception('Server sedang tidur 😴');
+    const quests = ['Kalahkan 3 Goblin', 'Cari 2 Potion', 'Lindungi desa dari Wolf', 'Temukan Gem tersembunyi'];
     return quests[rng.nextInt(quests.length)];
+  }
+
+  void demoHeal() {
+    final healedHero = hero.heal(10);
+    setState(() => hero = healedHero);
+    show('✅ Heal +10 HP\nSekarang: $hero');
+  }
+
+  void demoInventory() {
+    final lines = hero.inventory.entries.map((e) => '• ${e.key}: ${e.value}').toList();
+    show(['=== Inventory ===', ...lines].join('\n'));
+  }
+
+  Future<void> demoShopItems() async {
+    show('⏳ Mengambil item dari shop...');
+    try {
+      final items = await fetchShopItems();
+      show(['=== Shop Items ===', for (final item in items) '• ${item.toTitleCase()}'].join('\n'));
+    } catch (e) {
+      show('❌ Gagal ambil item: $e');
+    }
+  }
+
+  Future<List<String>> fetchShopItems() async {
+    await Future.delayed(const Duration(seconds: 1));
+    return ['potion', 'elixir', 'sword', 'shield'];
   }
 
   @override
@@ -245,36 +214,15 @@ class _DartLabPageState extends State<DartLabPage> {
               spacing: 8,
               runSpacing: 8,
               children: [
-                ElevatedButton.icon(
-                  onPressed: demoVariablesAndNullSafety,
-                  icon: const Icon(Icons.bolt),
-                  label: const Text('Variables + Null'),
-                ),
-                ElevatedButton.icon(
-                  onPressed: demoFunctions,
-                  icon: const Icon(Icons.functions),
-                  label: const Text('Functions'),
-                ),
-                ElevatedButton.icon(
-                  onPressed: demoCollections,
-                  icon: const Icon(Icons.list_alt),
-                  label: const Text('Collections'),
-                ),
-                ElevatedButton.icon(
-                  onPressed: demoClasses,
-                  icon: const Icon(Icons.shield),
-                  label: const Text('Class + Enum'),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () => demoAsyncAwait(),
-                  icon: const Icon(Icons.cloud_download),
-                  label: const Text('Async/Await'),
-                ),
-                OutlinedButton.icon(
-                  onPressed: () => show('Tekan tombol untuk melihat demo Dart!'),
-                  icon: const Icon(Icons.refresh),
-                  label: const Text('Clear'),
-                ),
+                ElevatedButton.icon(onPressed: demoVariablesAndNullSafety, icon: const Icon(Icons.bolt), label: const Text('Variables + Null')),
+                ElevatedButton.icon(onPressed: demoFunctions, icon: const Icon(Icons.functions), label: const Text('Functions')),
+                ElevatedButton.icon(onPressed: demoCollections, icon: const Icon(Icons.list_alt), label: const Text('Collections')),
+                ElevatedButton.icon(onPressed: demoClasses, icon: const Icon(Icons.shield), label: const Text('Class + Enum')),
+                ElevatedButton.icon(onPressed: () => demoAsyncAwait(), icon: const Icon(Icons.cloud_download), label: const Text('Async/Await')),
+                ElevatedButton.icon(onPressed: demoHeal, icon: const Icon(Icons.healing), label: const Text('Heal +10 HP')),
+                ElevatedButton.icon(onPressed: demoInventory, icon: const Icon(Icons.backpack), label: const Text('Inventory')),
+                ElevatedButton.icon(onPressed: demoShopItems, icon: const Icon(Icons.store), label: const Text('Shop Items')),
+                OutlinedButton.icon(onPressed: () => show('Tekan tombol untuk melihat demo Dart!'), icon: const Icon(Icons.refresh), label: const Text('Clear')),
               ],
             ),
             const SizedBox(height: 16),
@@ -282,9 +230,9 @@ class _DartLabPageState extends State<DartLabPage> {
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.06),
+                  color: Colors.black.withValues(alpha: 0.06),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.black.withOpacity(0.1)),
+                  border: Border.all(color: Colors.black.withValues(alpha: 0.1)),
                 ),
                 child: SingleChildScrollView(
                   child: SelectableText(

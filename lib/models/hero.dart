@@ -18,40 +18,38 @@ class HeroRpg {
   final Job job;
   final int baseHp;
   final int baseMp;
+  final Map<String, int> inventory;
 
   const HeroRpg({
     required this.name,
     required this.job,
     required this.baseHp,
     required this.baseMp,
+    this.inventory = const {},
   });
 
-  // Named constructor (contoh)
-  const HeroRpg.novice(String name)
-      : name = name,
-        job = Job.warrior,
+  const HeroRpg.novice(this.name)
+      : job = Job.warrior,
         baseHp = 50,
-        baseMp = 20;
+        baseMp = 20,
+        inventory = const {};
 
-  // Factory: bikin object dari Map/JSON
   factory HeroRpg.fromJson(Map<String, dynamic> json) {
     final jobString = (json['job'] as String?) ?? 'warrior';
-
     final job = switch (jobString) {
       'mage' => Job.mage,
       'archer' => Job.archer,
       _ => Job.warrior,
     };
-
     return HeroRpg(
       name: (json['name'] as String?) ?? 'Unknown',
       job: job,
       baseHp: (json['baseHp'] as int?) ?? 50,
       baseMp: (json['baseMp'] as int?) ?? 20,
+      inventory: Map<String, int>.from(json['inventory'] ?? {}),
     );
   }
 
-  // Getter: property hasil hitungan
   int get power {
     return switch (job) {
       Job.warrior => baseHp + (baseMp ~/ 4),
@@ -60,13 +58,23 @@ class HeroRpg {
     };
   }
 
-  // Method: mengembalikan object baru (immutable style)
   HeroRpg levelUp(int times) {
     return HeroRpg(
       name: name,
       job: job,
       baseHp: baseHp + 10 * times,
       baseMp: baseMp + 8 * times,
+      inventory: inventory,
+    );
+  }
+
+  HeroRpg heal(int hpAdd) {
+    return HeroRpg(
+      name: name,
+      job: job,
+      baseHp: baseHp + hpAdd,
+      baseMp: baseMp,
+      inventory: inventory,
     );
   }
 
