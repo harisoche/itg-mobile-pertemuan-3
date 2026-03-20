@@ -27,9 +27,8 @@ class HeroRpg {
   });
 
   // Named constructor (contoh)
-  const HeroRpg.novice(String name)
-      : name = name,
-        job = Job.warrior,
+  const HeroRpg.novice(this.name)
+      : job = Job.warrior,
         baseHp = 50,
         baseMp = 20;
 
@@ -67,6 +66,16 @@ class HeroRpg {
       job: job,
       baseHp: baseHp + 10 * times,
       baseMp: baseMp + 8 * times,
+    );
+  }
+
+  // Heal: mengembalikan Hero baru dengan HP bertambah (immutable)
+  HeroRpg heal(int amount) {
+    return HeroRpg(
+      name: name,
+      job: job,
+      baseHp: baseHp + amount,
+      baseMp: baseMp,
     );
   }
 
