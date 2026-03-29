@@ -15,25 +15,26 @@ extension JobLabel on Job {
 
 class HeroRpg {
   final String name;
+  final String title;
   final Job job;
   final int baseHp;
   final int baseMp;
 
   const HeroRpg({
     required this.name,
+    required this.title,
     required this.job,
     required this.baseHp,
     required this.baseMp,
   });
 
-  // Named constructor (contoh)
   const HeroRpg.novice(String name)
-      : name = name,
-        job = Job.warrior,
-        baseHp = 50,
-        baseMp = 20;
+    : name = name,
+      title = 'Novice',
+      job = Job.warrior,
+      baseHp = 50,
+      baseMp = 20;
 
-  // Factory: bikin object dari Map/JSON
   factory HeroRpg.fromJson(Map<String, dynamic> json) {
     final jobString = (json['job'] as String?) ?? 'warrior';
 
@@ -45,13 +46,13 @@ class HeroRpg {
 
     return HeroRpg(
       name: (json['name'] as String?) ?? 'Unknown',
+      title: (json['title'] as String?) ?? 'Adventurer',
       job: job,
       baseHp: (json['baseHp'] as int?) ?? 50,
       baseMp: (json['baseMp'] as int?) ?? 20,
     );
   }
 
-  // Getter: property hasil hitungan
   int get power {
     return switch (job) {
       Job.warrior => baseHp + (baseMp ~/ 4),
@@ -60,10 +61,10 @@ class HeroRpg {
     };
   }
 
-  // Method: mengembalikan object baru (immutable style)
   HeroRpg levelUp(int times) {
     return HeroRpg(
       name: name,
+      title: title,
       job: job,
       baseHp: baseHp + 10 * times,
       baseMp: baseMp + 8 * times,
@@ -72,6 +73,6 @@ class HeroRpg {
 
   @override
   String toString() {
-    return 'HeroRpg(name: $name, job: ${job.label}, hp: $baseHp, mp: $baseMp)';
+    return 'HeroRpg(name: $name, title: $title, job: ${job.label}, hp: $baseHp, mp: $baseMp)';
   }
 }

@@ -12,288 +12,158 @@ class DartLabPage extends StatefulWidget {
 class _DartLabPageState extends State<DartLabPage> {
   String output = 'Tekan tombol untuk melihat demo Dart!';
 
+  int currentHp = 100;
+  List<String> inventory = [];
+
   void show(String text) {
     setState(() => output = text);
   }
 
-  // 1) VAR / FINAL / CONST + NULL SAFETY
+  // ================= RPG FEATURE =================
+
+  void heal() {
+    currentHp += 10;
+
+    show(['=== Heal ===', '❤️ HP +10', 'HP sekarang: $currentHp'].join('\n'));
+  }
+
+  void attack(String monster, {int bonus = 0}) {
+    final rng = Random();
+
+    int baseDamage = rng.nextInt(10) + 1 + bonus;
+    bool isCrit = rng.nextBool();
+    int totalDamage = isCrit ? baseDamage * 3 : baseDamage;
+
+    show(
+      [
+        '=== Attack ===',
+        '⚔ Attack $monster',
+        'Base damage: $baseDamage',
+        if (isCrit) '🔥 CRITICAL HIT x3!',
+        'Total damage: $totalDamage',
+      ].join('\n'),
+    );
+  }
+
+  void randomLoot() {
+    final rng = Random();
+    final items = ['gold', 'potion', 'gem', 'scroll'];
+
+    final loot = items[rng.nextInt(items.length)];
+    inventory.add(loot);
+
+    show(
+      [
+        '=== Random Loot ===',
+        '🎁 Dapat: $loot',
+        'Inventory: $inventory',
+      ].join('\n'),
+    );
+  }
+
+  // ================= DEMO =================
+
   void demoVariablesAndNullSafety() {
-    // var: tipe bisa "di-infer" oleh Dart
-    var name = 'Rani'; // String
-
-    // final: nilainya hanya bisa di-assign sekali (runtime constant)
+    var name = 'Rani';
     final hp = 100;
-
-    // const: benar-benar constant di compile-time
     const maxLevel = 10;
 
-    // Null safety: tipe? artinya boleh null
     String? guild;
 
-    // Operator ?? (kalau null, pakai nilai pengganti)
     final guildName = guild ?? 'No Guild';
 
-    // Operator ?. (akses property/method kalau tidak null)
-    final guildUpper = guildName.toUpperCase(); // hasilnya String? (bisa null)
-
-    // Contoh list yang boleh menyimpan null
-    final List<int?> potions = [1, null, 3];
-
-    show([
-      '=== Variables + Null Safety ===',
-      'name (var): $name',
-      'hp (final): $hp',
-      'maxLevel (const): $maxLevel',
-      'guild: $guild',
-      'guildName (??): $guildName',
-      'guildUpper (?.): $guildUpper',
-      'potions: $potions',
-      '',
-      'Catatan:',
-      '- var = Dart menebak tipe',
-      '- final = sekali assign (runtime)',
-      '- const = compile-time constant',
-      '- String? = boleh null',
-    ].join('\n'));
+    show(
+      [
+        '=== Variables ===',
+        'name: $name',
+        'hp: $hp',
+        'maxLevel: $maxLevel',
+        'guild: $guildName',
+      ].join('\n'),
+    );
   }
 
-  // 2) FUNCTION: positional, named, optional, arrow, higher-order
   void demoFunctions() {
-    int add(int a, int b) => a + b; // arrow function
+    int add(int a, int b) => a + b;
 
-    // optional positional parameter [ ... ]
-    String greet(String name, [String? title]) {
-      if (title == null) return 'Halo $name!';
-      return 'Halo $title $name!';
-    }
+    final result = add(2, 3);
 
-    // named parameter { ... } + required
-    String castSpell({required String spell, int manaCost = 10}) {
-      return '🪄 Cast $spell (mana -$manaCost)';
-    }
-
-    // function sebagai parameter
-    int applyTwice(int value, int Function(int) f) {
-      return f(f(value));
-    }
-
-    final resultAdd = add(2, 3);
-    final hello1 = greet('Rani');
-    final hello2 = greet('Rani', 'Mage');
-    final spell1 = castSpell(spell: 'Fireball');
-    final spell2 = castSpell(spell: 'Heal', manaCost: 5);
-    final doubledTwice = applyTwice(3, (x) => x * 2); // 3 -> 6 -> 12
-
-    show([
-      '=== Functions ===',
-      'add(2,3) => $resultAdd',
-      'greet("Rani") => $hello1',
-      'greet("Rani","Mage") => $hello2',
-      'castSpell(spell:"Fireball") => $spell1',
-      'castSpell(spell:"Heal", manaCost:5) => $spell2',
-      'applyTwice(3, x*2) => $doubledTwice',
-      '',
-      'Catatan:',
-      '- [param] = optional positional',
-      '- {param} = named parameter',
-      '- required = wajib diisi',
-      '- Function bisa jadi parameter',
-    ].join('\n'));
+    show(['=== Functions ===', 'add(2,3) = $result'].join('\n'));
   }
 
-  // 3) COLLECTION: List/Map + map/where/fold + collection if/for
   void demoCollections() {
-    final rng = Random();
+    final monsters = ['Slime', 'Goblin', 'Dragon'];
 
-    // List
-    final monsters = ['Slime', 'Goblin', 'Wolf', 'Dragon'];
-
-    // Ambil monster yang panjang namanya > 4
-    final strongNames = monsters.where((m) => m.length > 4).toList();
-
-    // Ubah jadi "Monster: X"
-    final labeled = monsters.map((m) => 'Monster: $m').toList();
-
-    // Total damage acak untuk 3 hit
-    final hits = List.generate(3, (_) => rng.nextInt(10) + 1); // 1..10
-    final totalDamage = hits.fold<int>(0, (sum, x) => sum + x);
-
-    // Map
-    final loot = {
-      'gold': 120,
-      'potion': 2,
-      'gem': 1,
-    };
-
-    // Collection if/for (seru buat bikin list dinamis)
-    final level = rng.nextInt(5) + 1; // 1..5
-    final rewards = [
-      '🎁 Daily Reward',
-      if (level >= 3) '⭐ Bonus Reward (level >= 3)',
-      for (final item in loot.keys) '• $item',
-    ];
-
-    show([
-      '=== Collections (List/Map) ===',
-      'monsters: $monsters',
-      'where(length>4): $strongNames',
-      'map(label): $labeled',
-      'hits: $hits',
-      'totalDamage (fold): $totalDamage',
-      '',
-      'loot map: $loot',
-      'random level: $level',
-      'rewards:',
-      ...rewards,
-      '',
-      'Catatan:',
-      '- where = filter',
-      '- map = transform',
-      '- fold = reduce + akumulasi',
-      '- collection if/for = list dinamis',
-    ].join('\n'));
+    show(['=== Collections ===', 'monsters: $monsters'].join('\n'));
   }
 
-  // 4) CLASS + CONSTRUCTOR + FACTORY + GETTER + ENUM + EXTENSION
   void demoClasses() {
-    final hero = HeroRpg(name: 'Rani', job: Job.mage, baseHp: 80, baseMp: 120);
-    final leveled = hero.levelUp(3);
+    final hero = HeroRpg(
+      name: 'Rani',
+      title: 'Mage',
+      job: Job.mage,
+      baseHp: 80,
+      baseMp: 120,
+    );
 
-    // Simulasi data JSON (Map)
-    final json = {
-      'name': 'Bima',
-      'job': 'warrior',
-      'baseHp': 120,
-      'baseMp': 40,
-    };
-
-    final hero2 = HeroRpg.fromJson(json);
-
-    show([
-      '=== Class / Enum / Extension ===',
-      'hero: $hero',
-      'hero.power => ${hero.power}',
-      'leveled (levelUp 3x): $leveled',
-      '',
-      'fromJson:',
-      'hero2: $hero2',
-      'hero2.jobLabel => ${hero2.job.label}',
-      '',
-      'Catatan:',
-      '- constructor = cara membuat object',
-      '- factory fromJson = bikin object dari Map',
-      '- getter (power) = property hasil hitungan',
-      '- enum = pilihan tetap (job)',
-      '- extension = nambah kemampuan ke tipe (job.label)',
-    ].join('\n'));
+    show(['=== Class ===', '$hero', 'Power: ${hero.power}'].join('\n'));
   }
 
-  // 5) ASYNC/AWAIT + TRY/CATCH
   Future<void> demoAsyncAwait() async {
-    show('⏳ Mengambil quest dari server...');
+    show('Loading quest...');
 
-    try {
-      final quest = await fetchQuest();
-      show([
-        '=== Async/Await ===',
-        'Quest didapat!',
-        '• $quest',
-        '',
-        'Catatan:',
-        '- Future = nilai yang datang belakangan',
-        '- await = tunggu Future selesai',
-        '- try/catch = tangani error',
-      ].join('\n'));
-    } catch (e) {
-      show('❌ Gagal ambil quest: $e');
-    }
-  }
-
-  Future<String> fetchQuest() async {
-    // Simulasi "internet" dengan delay
     await Future.delayed(const Duration(seconds: 1));
 
-    // Kadang gagal biar seru
-    final rng = Random();
-    if (rng.nextInt(5) == 0) {
-      throw Exception('Server sedang tidur 😴');
-    }
-
-    const quests = [
-      'Kalahkan 3 Goblin',
-      'Cari 2 Potion',
-      'Lindungi desa dari Wolf',
-      'Temukan Gem tersembunyi',
-    ];
-
-    return quests[rng.nextInt(quests.length)];
+    show(['=== Async ===', 'Quest selesai!'].join('\n'));
   }
+
+  // ================= UI =================
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dart Lab RPG'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
+      appBar: AppBar(title: const Text('Dart Lab RPG')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: [
-                ElevatedButton.icon(
+                ElevatedButton(onPressed: heal, child: const Text('Heal')),
+                ElevatedButton(
+                  onPressed: () => attack('Goblin', bonus: 5),
+                  child: const Text('Attack'),
+                ),
+                ElevatedButton(
+                  onPressed: randomLoot,
+                  child: const Text('Loot'),
+                ),
+                ElevatedButton(
                   onPressed: demoVariablesAndNullSafety,
-                  icon: const Icon(Icons.bolt),
-                  label: const Text('Variables + Null'),
+                  child: const Text('Variables'),
                 ),
-                ElevatedButton.icon(
+                ElevatedButton(
                   onPressed: demoFunctions,
-                  icon: const Icon(Icons.functions),
-                  label: const Text('Functions'),
+                  child: const Text('Functions'),
                 ),
-                ElevatedButton.icon(
+                ElevatedButton(
                   onPressed: demoCollections,
-                  icon: const Icon(Icons.list_alt),
-                  label: const Text('Collections'),
+                  child: const Text('Collections'),
                 ),
-                ElevatedButton.icon(
+                ElevatedButton(
                   onPressed: demoClasses,
-                  icon: const Icon(Icons.shield),
-                  label: const Text('Class + Enum'),
+                  child: const Text('Class'),
                 ),
-                ElevatedButton.icon(
-                  onPressed: () => demoAsyncAwait(),
-                  icon: const Icon(Icons.cloud_download),
-                  label: const Text('Async/Await'),
-                ),
-                OutlinedButton.icon(
-                  onPressed: () => show('Tekan tombol untuk melihat demo Dart!'),
-                  icon: const Icon(Icons.refresh),
-                  label: const Text('Clear'),
+                ElevatedButton(
+                  onPressed: demoAsyncAwait,
+                  child: const Text('Async'),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.06),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.black.withOpacity(0.1)),
-                ),
-                child: SingleChildScrollView(
-                  child: SelectableText(
-                    output,
-                    style: const TextStyle(fontFamily: 'monospace', height: 1.35),
-                  ),
-                ),
-              ),
-            ),
+            Expanded(child: SingleChildScrollView(child: Text(output))),
           ],
         ),
       ),
