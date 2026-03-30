@@ -12,7 +12,7 @@ class DartLabPage extends StatefulWidget {
 class _DartLabPageState extends State<DartLabPage> {
   String output = 'Tekan tombol untuk melihat demo Dart!';
 
-// State tambahan untuk mendemonstrasikan Heal (PR No. 1)
+  // State tambahan untuk mendemonstrasikan Heal (Tantangan 1)
   HeroRpg? activeHero;
 
   void show(String text) {
@@ -21,25 +21,12 @@ class _DartLabPageState extends State<DartLabPage> {
 
   // 1) VAR / FINAL / CONST + NULL SAFETY
   void demoVariablesAndNullSafety() {
-    // var: tipe bisa "di-infer" oleh Dart
-    var name = 'Rani'; // String
-
-    // final: nilainya hanya bisa di-assign sekali (runtime constant)
+    var name = 'Rani';
     final hp = 100;
-
-    // const: benar-benar constant di compile-time
     const maxLevel = 10;
-
-    // Null safety: tipe? artinya boleh null
     String? guild;
-
-    // Operator ?? (kalau null, pakai nilai pengganti)
     final guildName = guild ?? 'No Guild';
-
-    // Operator ?. (akses property/method kalau tidak null)
-    final guildUpper = guildName.toUpperCase(); // hasilnya String? (bisa null)
-
-    // Contoh list yang boleh menyimpan null
+    final guildUpper = guildName.toUpperCase();
     final List<int?> potions = [1, null, 3];
 
     show([
@@ -62,20 +49,17 @@ class _DartLabPageState extends State<DartLabPage> {
 
   // 2) FUNCTION: positional, named, optional, arrow, higher-order
   void demoFunctions() {
-    int add(int a, int b) => a + b; // arrow function
+    int add(int a, int b) => a + b;
 
-    // optional positional parameter [ ... ]
     String greet(String name, [String? title]) {
       if (title == null) return 'Halo $name!';
       return 'Halo $title $name!';
     }
 
-    // named parameter { ... } + required
     String castSpell({required String spell, int manaCost = 10}) {
       return '🪄 Cast $spell (mana -$manaCost)';
     }
 
-    // function sebagai parameter
     int applyTwice(int value, int Function(int) f) {
       return f(f(value));
     }
@@ -85,7 +69,7 @@ class _DartLabPageState extends State<DartLabPage> {
     final hello2 = greet('Rani', 'Mage');
     final spell1 = castSpell(spell: 'Fireball');
     final spell2 = castSpell(spell: 'Heal', manaCost: 5);
-    final doubledTwice = applyTwice(3, (x) => x * 2); // 3 -> 6 -> 12
+    final doubledTwice = applyTwice(3, (x) => x * 2);
 
     show([
       '=== Functions ===',
@@ -107,29 +91,19 @@ class _DartLabPageState extends State<DartLabPage> {
   // 3) COLLECTION: List/Map + map/where/fold + collection if/for
   void demoCollections() {
     final rng = Random();
-
-    // List
     final monsters = ['Slime', 'Goblin', 'Wolf', 'Dragon'];
-
-    // Ambil monster yang panjang namanya > 4
     final strongNames = monsters.where((m) => m.length > 4).toList();
-
-    // Ubah jadi "Monster: X"
     final labeled = monsters.map((m) => 'Monster: $m').toList();
-
-    // Total damage acak untuk 3 hit
-    final hits = List.generate(3, (_) => rng.nextInt(10) + 1); // 1..10
+    final hits = List.generate(3, (_) => rng.nextInt(10) + 1);
     final totalDamage = hits.fold<int>(0, (sum, x) => sum + x);
 
-    // Map
     final loot = {
       'gold': 120,
       'potion': 2,
       'gem': 1,
     };
 
-    // Collection if/for (seru buat bikin list dinamis)
-    final level = rng.nextInt(5) + 1; // 1..5
+    final level = rng.nextInt(5) + 1;
     final rewards = [
       '🎁 Daily Reward',
       if (level >= 3) '⭐ Bonus Reward (level >= 3)',
@@ -159,17 +133,21 @@ class _DartLabPageState extends State<DartLabPage> {
 
   // 4) CLASS + CONSTRUCTOR + FACTORY + GETTER + ENUM + EXTENSION
   void demoClasses() {
-    final hero = HeroRpg(name: 'Rani', title: 'The Great', job: Job.mage, baseHp: 80, baseMp: 120);
+    final hero = HeroRpg(
+      name: 'Rani',
+      title: 'The Great',
+      job: Job.mage,
+      baseHp: 80,
+      baseMp: 120,
+    );
     final leveled = hero.levelUp(3);
 
-    // Simulasi data JSON (Map)
     final json = {
       'name': 'Bima',
       'job': 'warrior',
       'baseHp': 120,
       'baseMp': 40,
     };
-
     final hero2 = HeroRpg.fromJson(json);
 
     show([
@@ -214,22 +192,17 @@ class _DartLabPageState extends State<DartLabPage> {
   }
 
   Future<String> fetchQuest() async {
-    // Simulasi "internet" dengan delay
     await Future.delayed(const Duration(seconds: 1));
-
-    // Kadang gagal biar seru
     final rng = Random();
     if (rng.nextInt(5) == 0) {
       throw Exception('Server sedang tidur 😴');
     }
-
     const quests = [
       'Kalahkan 3 Goblin',
       'Cari 2 Potion',
       'Lindungi desa dari Wolf',
       'Temukan Gem tersembunyi',
     ];
-
     return quests[rng.nextInt(quests.length)];
   }
 
@@ -237,8 +210,6 @@ class _DartLabPageState extends State<DartLabPage> {
   void demoRandomLoot() {
     final loots = ['gold', 'potion', 'gem', 'scroll'];
     final rng = Random();
-    
-    // Mengambil item acak berdasarkan index (0 sampai panjang list - 1)
     final pickedLoot = loots[rng.nextInt(loots.length)];
 
     show([
@@ -253,21 +224,18 @@ class _DartLabPageState extends State<DartLabPage> {
     ].join('\n'));
   }
 
-// --- LATIHAN B: FUNCTION ATTACK ---
-  
+  // --- LATIHAN B: FUNCTION ATTACK ---
   String attack(String monster, {int bonus = 0}) {
     final rng = Random();
-    final baseDamage = rng.nextInt(10) + 1; // 1 sampai 10
+    final baseDamage = rng.nextInt(10) + 1;
     final totalDamage = baseDamage + bonus;
-
     return 'Attack $monster, damage: $totalDamage (Base: $baseDamage + Bonus: $bonus)';
   }
 
   void demoAttackAction() {
-    // Memanggil function attack dengan berbagai skenario
-    final atk1 = attack('Goblin'); // Tanpa bonus (menggunakan default 0)
-    final atk2 = attack('Dragon', bonus: 5); // Menggunakan named parameter bonus
-    
+    final atk1 = attack('Goblin');
+    final atk2 = attack('Dragon', bonus: 5);
+
     show([
       '=== Battle Log ===',
       atk1,
@@ -280,7 +248,7 @@ class _DartLabPageState extends State<DartLabPage> {
     ].join('\n'));
   }
 
-  // --- LATIHAN C: PARSING JSON (Baru) ---
+  // --- LATIHAN C: PARSING JSON ---
   void demoParsingJson() {
     final jsonResponse = {
       'name': 'Gatot',
@@ -289,7 +257,6 @@ class _DartLabPageState extends State<DartLabPage> {
       'baseHp': 200,
       'baseMp': 50,
     };
-
     final hero = HeroRpg.fromJson(jsonResponse);
 
     show([
@@ -307,71 +274,111 @@ class _DartLabPageState extends State<DartLabPage> {
     ].join('\n'));
   }
 
-// PR 1: Tambah Tombol Heal (Immutable)
+  // ================================================================
+  // TANTANGAN 1: Tombol Heal — Immutable (return HeroRpg baru)
+  // ================================================================
   void demoHealAction() {
-    // Inisialisasi jika belum ada
+    // Inisialisasi hero jika belum ada
     activeHero ??= const HeroRpg(
-      name: 'Rani', 
-      title: 'The Great', 
-      job: Job.mage, 
-      baseHp: 80, 
-      baseMp: 120
+      name: 'Rani',
+      title: 'The Great',
+      job: Job.mage,
+      baseHp: 80,
+      baseMp: 120,
     );
 
-    // Update secara immutable (menghasilkan object baru)
+    // heal() mengembalikan object HeroRpg baru dengan HP +10 (immutable style)
     activeHero = activeHero!.heal();
 
     show([
-      '=== PR_NO 1: Heal Action ===',
+      '=== Tantangan 1: Heal Action ===',
       'Hero melakukan pemulihan...',
       'Status Baru: $activeHero',
       '',
-      'Catatan: HP bertambah +10 setiap klik.'
+      'Catatan:',
+      '- heal() tidak mengubah object lama',
+      '- Menghasilkan HeroRpg baru dengan HP +10 (immutable)',
+      '- Tekan lagi untuk terus menambah HP',
     ].join('\n'));
   }
 
-  // PR 2: Tombol Inventory (Map Format)
+  // ================================================================
+  // TANTANGAN 2: Tombol Inventory — Map item -> jumlah, format rapi
+  // ================================================================
   void demoInventoryDisplay() {
-    final items = {'Gold': 500, 'Potion': 3, 'Magic Scroll': 1, 'Gem': 1};
-    
-    List<String> result = ['=== PR_NO 2: Hero Inventory ==='];
+    final items = {
+      'Gold': 500,
+      'Potion': 3,
+      'Magic Scroll': 1,
+      'Gem': 1,
+    };
+
+    final List<String> result = ['=== Tantangan 2: Hero Inventory ===', ''];
     items.forEach((key, value) {
       result.add('• $key : $value');
     });
+    result.addAll([
+      '',
+      'Catatan:',
+      '- Map<String, int> untuk menyimpan item dan jumlahnya',
+      '- forEach() untuk iterasi setiap entry Map',
+      '- Format "• item : jumlah" untuk tampilan rapi',
+    ]);
 
     show(result.join('\n'));
   }
 
-  // PR 3: Extension toTitleCase()
+  // ================================================================
+  // TANTANGAN 3: Extension toTitleCase() — pakai untuk nama monster
+  // ================================================================
   void demoAttackWithTitleCase() {
     String monsterName = 'goblin'; // Input huruf kecil
     final damage = Random().nextInt(10) + 1;
-    
-    // Memanggil extension yang dibuat di model
+
+    // toTitleCase() didefinisikan di extension StringExt pada hero.dart
     show([
-      '=== PR_NO 3: String Extension ===',
-      'Input awal: $monsterName',
-      'Setelah toTitleCase(): ${monsterName.toTitleCase()}',
+      '=== Tantangan 3: String Extension ===',
+      'Input awal (huruf kecil): $monsterName',
+      'Setelah toTitleCase()   : ${monsterName.toTitleCase()}',
       '',
       'Attack ${monsterName.toTitleCase()}, damage: $damage',
+      '',
+      'Catatan:',
+      '- extension StringExt on String { ... }',
+      '- toTitleCase() = huruf pertama kapital, sisanya kecil',
+      '- Dipakai langsung pada String biasa: monsterName.toTitleCase()',
     ].join('\n'));
   }
 
-  // PR 4: Async fetchShopItems()
+  // ================================================================
+  // TANTANGAN 4: Async fetchShopItems() dengan Future.delayed 1 detik
+  // ================================================================
   Future<void> fetchShopItems() async {
-    show('PR_NO 4: Menghubungi pedagang shop...');
-    
+    show('🛒 Tantangan 4: Menghubungi pedagang shop...');
+
+    // Simulasi network request dengan delay 1 detik
     await Future.delayed(const Duration(seconds: 1));
-    
-    const shopList = ['Iron Sword - 100g', 'Mana Potion - 20g', 'Antidote - 15g'];
-    
+
+    const shopList = [
+      'Iron Sword     - 100g',
+      'Mana Potion    -  20g',
+      'Antidote       -  15g',
+      'Steel Shield   - 150g',
+      'Magic Staff    - 200g',
+    ];
+
     show([
-      '=== Shop Items (Async) ===',
+      '=== Tantangan 4: Fetch Shop Items (Async) ===',
       'Barang tersedia hari ini:',
-      ...shopList.map((item) => '- $item'),
+      '',
+      ...shopList.map((item) => '• $item'),
+      '',
+      'Catatan:',
+      '- fetchShopItems() adalah Future<void>',
+      '- await Future.delayed(1 detik) = simulasi network',
+      '- Tampilkan loading dulu, lalu hasil setelah selesai',
     ].join('\n'));
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -434,31 +441,45 @@ class _DartLabPageState extends State<DartLabPage> {
                   onPressed: demoParsingJson,
                   icon: const Icon(Icons.data_object),
                   label: const Text('Parse JSON'),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.purple.shade100),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple.shade100,
+                  ),
                 ),
+                // Tantangan 1
                 ElevatedButton.icon(
-                  onPressed: demoHealAction, 
-                  icon: const Icon(Icons.health_and_safety), 
+                  onPressed: demoHealAction,
+                  icon: const Icon(Icons.health_and_safety),
                   label: const Text('Heal (+10)'),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade100),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade100,
+                  ),
                 ),
+                // Tantangan 2
                 ElevatedButton.icon(
-                  onPressed: demoInventoryDisplay, 
-                  icon: const Icon(Icons.backpack), 
+                  onPressed: demoInventoryDisplay,
+                  icon: const Icon(Icons.backpack),
                   label: const Text('Inventory'),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.brown.shade100),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.brown.shade100,
+                  ),
                 ),
+                // Tantangan 3
                 ElevatedButton.icon(
-                  onPressed: demoAttackWithTitleCase, 
-                  icon: const Icon(Icons.text_fields), 
+                  onPressed: demoAttackWithTitleCase,
+                  icon: const Icon(Icons.text_fields),
                   label: const Text('TitleCase Atk'),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.teal.shade100),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.teal.shade100,
+                  ),
                 ),
+                // Tantangan 4
                 ElevatedButton.icon(
-                  onPressed: fetchShopItems, 
-                  icon: const Icon(Icons.shopping_bag), 
+                  onPressed: fetchShopItems,
+                  icon: const Icon(Icons.shopping_bag),
                   label: const Text('Fetch Shop'),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue.shade100),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue.shade100,
+                  ),
                 ),
                 OutlinedButton.icon(
                   onPressed: () => show('Tekan tombol untuk melihat demo Dart!'),

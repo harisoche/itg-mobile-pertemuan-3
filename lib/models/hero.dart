@@ -1,10 +1,10 @@
 enum Job { warrior, mage, archer }
 
-// PR NO 3: Extension untuk String toTitleCase
+// Tantangan 3: Extension untuk String toTitleCase()
 extension StringExt on String {
   String toTitleCase() {
-    if (this.isEmpty) return this;
-    return '${this[0].toUpperCase()}${this.substring(1).toLowerCase()}';
+    if (isEmpty) return this;
+    return '${this[0].toUpperCase()}${substring(1).toLowerCase()}';
   }
 }
 
@@ -23,11 +23,12 @@ extension JobLabel on Job {
 
 class HeroRpg {
   final String name;
-  final String title; // MENAMBAHKAN FIELD BARU
+  final String title;
   final Job job;
   final int baseHp;
   final int baseMp;
-// PR NO 2: Map item -> jumlah (Inventory)
+
+  // Tantangan 2: Map inventory item -> jumlah
   final Map<String, int> inventory;
 
   const HeroRpg({
@@ -36,10 +37,10 @@ class HeroRpg {
     required this.job,
     required this.baseHp,
     required this.baseMp,
-    this.inventory = const {}, // default: inventory kosong
+    this.inventory = const {},
   });
 
-  // Named constructor (contoh)
+  // Named constructor
   const HeroRpg.novice(String name)
       : name = name,
         title = 'Novice',
@@ -68,13 +69,13 @@ class HeroRpg {
     );
   }
 
-// PR NO 1: Method Heal (Versi Immutable - Return Hero Baru)
+  // Tantangan 1: Method Heal — Immutable, return HeroRpg baru dengan HP +10
   HeroRpg heal() {
     return HeroRpg(
       name: name,
       title: title,
       job: job,
-      baseHp: baseHp + 10, // Tambah HP +10
+      baseHp: baseHp + 10,
       baseMp: baseMp,
       inventory: inventory,
     );
@@ -89,7 +90,7 @@ class HeroRpg {
     };
   }
 
-  // Method: mengembalikan object baru (immutable style)
+  // Method levelUp: immutable style
   HeroRpg levelUp(int times) {
     return HeroRpg(
       name: name,
@@ -105,4 +106,3 @@ class HeroRpg {
     return 'HeroRpg(name: $name, job: ${job.label}, hp: $baseHp, mp: $baseMp)';
   }
 }
-
