@@ -3,8 +3,8 @@ enum Job { warrior, mage, archer }
 // PR NO 3: Extension untuk String toTitleCase
 extension StringExt on String {
   String toTitleCase() {
-    if (this.isEmpty) return this;
-    return '${this[0].toUpperCase()}${this.substring(1).toLowerCase()}';
+    if (isEmpty) return this;
+    return '${this[0].toUpperCase()}${substring(1).toLowerCase()}';
   }
 }
 
@@ -40,9 +40,8 @@ class HeroRpg {
   });
 
   // Named constructor (contoh)
-  const HeroRpg.novice(String name)
-      : name = name,
-        title = 'Novice',
+  const HeroRpg.novice(this.name)
+      : title = 'Novice',
         job = Job.warrior,
         baseHp = 50,
         baseMp = 20,

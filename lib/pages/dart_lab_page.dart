@@ -472,9 +472,9 @@ class _DartLabPageState extends State<DartLabPage> {
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.06),
+                  color: Colors.black.withValues(alpha: 0.06),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.black.withOpacity(0.1)),
+                  border: Border.all(color: Colors.black.withValues(alpha: 0.1)),
                 ),
                 child: SingleChildScrollView(
                   child: SelectableText(
