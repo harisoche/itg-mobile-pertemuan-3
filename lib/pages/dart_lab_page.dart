@@ -11,10 +11,24 @@ class DartLabPage extends StatefulWidget {
 
 class _DartLabPageState extends State<DartLabPage> {
   String output = 'Tekan tombol untuk melihat demo Dart!';
+  HeroRpg hero = HeroRpg(
+  name: 'Player',
+  job: Job.warrior,
+  baseHp: 100,
+  baseMp: 50,
 
-// State tambahan untuk mendemonstrasikan Heal (PR No. 1)
-  HeroRpg? activeHero;
-
+  
+);
+Future<List<String>> fetchShopItems() async {
+  await Future.delayed(const Duration(seconds: 1));
+  return ["Sword", "Shield", "Potion"];
+}
+Map<String, int> inventory = {
+  "Potion": 2,
+  "Elixir": 1,
+  "Gold": 100,
+};
+HeroRpg? activeHero;
   void show(String text) {
     setState(() => output = text);
   }
@@ -109,8 +123,9 @@ class _DartLabPageState extends State<DartLabPage> {
     final rng = Random();
 
     // List
-    final monsters = ['Slime', 'Goblin', 'Wolf', 'Dragon'];
+    final monsters = ['slime', 'goblin king', 'dark wolf'];
 
+    final formatted = monsters.map((m) => m.toTitleCase()).toList();
     // Ambil monster yang panjang namanya > 4
     final strongNames = monsters.where((m) => m.length > 4).toList();
 
@@ -142,6 +157,7 @@ class _DartLabPageState extends State<DartLabPage> {
       'where(length>4): $strongNames',
       'map(label): $labeled',
       'hits: $hits',
+      'formatted monsters: $formatted',
       'totalDamage (fold): $totalDamage',
       '',
       'loot map: $loot',
@@ -385,17 +401,49 @@ class _DartLabPageState extends State<DartLabPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: demoVariablesAndNullSafety,
-                  icon: const Icon(Icons.bolt),
-                  label: const Text('Variables + Null'),
-                ),
-                ElevatedButton.icon(
-                  onPressed: demoFunctions,
+
+  Text(
+    "HP: ${hero.baseHp}",
+    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+  ),
+
+  const SizedBox(height: 10),
+
+  Wrap(
+    spacing: 8,
+    runSpacing: 8,
+    children: [
+      ElevatedButton.icon(
+        onPressed: () {
+          show(
+            inventory.entries
+                .map((item) => "${item.key}: ${item.value}")
+                .join('\n'),
+          );
+        },
+        icon: const Icon(Icons.inventory),
+        label: const Text('Inventory'),
+      ),
+      ElevatedButton.icon(
+        onPressed: () {
+          setState(() {
+            hero = hero.heal();
+          });
+        },
+        icon: const Icon(Icons.favorite),
+        label: const Text('Heal +10'),
+      ),
+      ElevatedButton.icon(
+        onPressed: () async {
+          show("Loading shop...");
+          final items = await fetchShopItems();
+          show(items.join('\n'));
+        },
+        icon: const Icon(Icons.store),
+        label: const Text('Shop'),
+      ),
+      ElevatedButton.icon(
+        onPressed: demoVariablesAndNullSafety,
                   icon: const Icon(Icons.functions),
                   label: const Text('Functions'),
                 ),
@@ -488,5 +536,14 @@ class _DartLabPageState extends State<DartLabPage> {
         ),
       ),
     );
+  }
+}
+
+extension StringExtension on String {
+  String toTitleCase() {
+    return split(' ')
+        .map((word) =>
+            word[0].toUpperCase() + word.substring(1).toLowerCase())
+        .join(' ');
   }
 }

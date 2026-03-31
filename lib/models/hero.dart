@@ -100,6 +100,14 @@ class HeroRpg {
     );
   }
 
+  HeroRpg heal() {
+  return HeroRpg(
+    name: name,
+    job: job,
+    baseHp: baseHp + 10,
+    baseMp: baseMp,
+  );
+}
   @override
   String toString() {
     return 'HeroRpg(name: $name, job: ${job.label}, hp: $baseHp, mp: $baseMp)';
