@@ -12,6 +12,15 @@ extension JobLabel on Job {
     }
   }
 }
+extension StringExtension on String {
+  String toTitleCase() {
+    return split(' ')
+        .map((word) => word.isEmpty
+            ? word
+            : '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}')
+        .join(' ');
+  }
+}
 
 class HeroRpg {
   final String name;
@@ -60,6 +69,16 @@ class HeroRpg {
     };
   }
 
+  // Method: tambah HP 10 (maksimal 100)
+  HeroRpg heal() {
+    return HeroRpg(
+      name: name,
+      job: job,
+      baseHp: (baseHp + 10 > 100) ? 100 : baseHp + 10,
+      baseMp: baseMp,
+    );
+  }
+
   // Method: mengembalikan object baru (immutable style)
   HeroRpg levelUp(int times) {
     return HeroRpg(
@@ -73,5 +92,15 @@ class HeroRpg {
   @override
   String toString() {
     return 'HeroRpg(name: $name, job: ${job.label}, hp: $baseHp, mp: $baseMp)';
+  }
+}
+extension StringExtension on String {
+  String toTitleCase() {
+    if (isEmpty) return this;
+    return split(' ')
+        .map((word) => word.isEmpty
+            ? word
+            : word[0].toUpperCase() + word.substring(1).toLowerCase())
+        .join(' ');
   }
 }

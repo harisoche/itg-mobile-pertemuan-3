@@ -12,6 +12,7 @@ class DartLabPage extends StatefulWidget {
 class _DartLabPageState extends State<DartLabPage> {
   String output = 'Tekan tombol untuk melihat demo Dart!';
 
+  HeroRpg _hero = const HeroRpg(name: 'Rani', job: Job.mage, baseHp: 80, baseMp: 120);
   void show(String text) {
     setState(() => output = text);
   }
@@ -228,6 +229,65 @@ class _DartLabPageState extends State<DartLabPage> {
 
     return quests[rng.nextInt(quests.length)];
   }
+    // Challenge 4: async fetchShopItems
+  Future<List<String>> fetchShopItems() async {
+    await Future.delayed(const Duration(seconds: 1));
+    return [
+      'Potion (50 gold)',
+      'Iron Sword (200 gold)',
+      'Magic Robe (350 gold)',
+      'Dragon Shield (500 gold)',
+    ];
+  }
+
+  Future<void> demoShopItems() async {
+    show('🛒 Mengambil item toko...');
+    try {
+      final items = await fetchShopItems();
+      show([
+        '=== Shop Items ===',
+        ...items.map((i) => '• $i'),
+        '',
+        'Catatan:',
+        '- fetchShopItems() pakai Future.delayed 1 detik',
+        '- async/await menunggu response sebelum tampil',
+      ].join('\n'));
+    } catch (e) {
+      show('❌ Gagal load toko: $e');
+    }
+  }
+
+  void demoTitleCase() {
+    const monsters = ['fire dragon', 'dark goblin', 'shadow wolf', 'ice slime'];
+    final titled = monsters.map((m) => m.toTitleCase()).toList();
+
+    show([
+      '=== Monster Names (toTitleCase) ===',
+      ...titled.map((m) => '🐉 $m'),
+      '',
+      'Catatan:',
+      '- toTitleCase() = String extension buatan sendiri',
+      '- split → capitalize tiap kata → join',
+    ].join('\n'));
+  }
+
+  void heal() {
+    final sebelum = _hero.baseHp;
+    _hero = _hero.heal();
+    final sesudah = _hero.baseHp;
+
+    final pesan = sebelum == sesudah
+        ? '❤️ HP sudah penuh! (MAX 100)'
+        : '✅ HP bertambah dari $sebelum → $sesudah (+${sesudah - sebelum})';
+
+    show([
+      '=== Heal! ===',
+      pesan,
+      '',
+      'Hero saat ini: $_hero',
+    ].join('\n'));
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -261,6 +321,12 @@ class _DartLabPageState extends State<DartLabPage> {
                   label: const Text('Collections'),
                 ),
                 ElevatedButton.icon(
+                  onPressed: heal,
+                  icon: const Icon(Icons.favorite),
+                  label: const Text('Heal +10'),
+                ),
+
+                ElevatedButton.icon(
                   onPressed: demoClasses,
                   icon: const Icon(Icons.shield),
                   label: const Text('Class + Enum'),
@@ -270,21 +336,31 @@ class _DartLabPageState extends State<DartLabPage> {
                   icon: const Icon(Icons.cloud_download),
                   label: const Text('Async/Await'),
                 ),
+                                ElevatedButton.icon(
+                  onPressed: () => demoShopItems(),
+                  icon: const Icon(Icons.store),
+                  label: const Text('Shop Items'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: demoTitleCase,
+                  icon: const Icon(Icons.text_fields),
+                  label: const Text('Monster Names'),
+                ),
                 OutlinedButton.icon(
                   onPressed: () => show('Tekan tombol untuk melihat demo Dart!'),
                   icon: const Icon(Icons.refresh),
                   label: const Text('Clear'),
                 ),
               ],
-            ),
+            ),  
             const SizedBox(height: 16),
             Expanded(
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.06),
+                  color: Colors.black.withValues(alpha: 0.06),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.black.withOpacity(0.1)),
+                  border: Border.all(color: Colors.black.withValues(alpha: 0.1)),
                 ),
                 child: SingleChildScrollView(
                   child: SelectableText(
