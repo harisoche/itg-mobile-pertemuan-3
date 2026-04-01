@@ -309,38 +309,49 @@ class _DartLabPageState extends State<DartLabPage> {
 
 // PR 1: Tambah Tombol Heal (Immutable)
   void demoHealAction() {
-    // Inisialisasi jika belum ada
-    activeHero ??= const HeroRpg(
-      name: 'Rani', 
-      title: 'The Great', 
-      job: Job.mage, 
-      baseHp: 80, 
-      baseMp: 120
-    );
+  activeHero ??= const HeroRpg(
+    name: 'Rani',
+    title: 'The Great',
+    job: Job.mage,
+    baseHp: 80,
+    baseMp: 120,
+  );
 
-    // Update secara immutable (menghasilkan object baru)
-    activeHero = activeHero!.heal();
+  // ✅ Heal + tambah item (biar inventory ikut update)
+  activeHero = activeHero!.heal().addItem("Potion");
 
-    show([
-      '=== PR_NO 1: Heal Action ===',
-      'Hero melakukan pemulihan...',
-      'Status Baru: $activeHero',
-      '',
-      'Catatan: HP bertambah +10 setiap klik.'
-    ].join('\n'));
-  }
+  show([
+    '=== PR_NO 1: Heal Action ===',
+    'HP sekarang: ${activeHero!.baseHp}',
+    'Inventory: ${activeHero!.inventory}',
+    '',
+    'Catatan: HP +10 & dapat Potion'
+  ].join('\n'));
+}
 
   // PR 2: Tombol Inventory (Map Format)
-  void demoInventoryDisplay() {
-    final items = {'Gold': 500, 'Potion': 3, 'Magic Scroll': 1, 'Gem': 1};
-    
-    List<String> result = ['=== PR_NO 2: Hero Inventory ==='];
-    items.forEach((key, value) {
-      result.add('• $key : $value');
-    });
+ void demoInventoryDisplay() {
+  activeHero ??= const HeroRpg(
+    name: 'Rani',
+    title: 'The Great',
+    job: Job.mage,
+    baseHp: 80,
+    baseMp: 120,
+  );
 
-    show(result.join('\n'));
-  }
+  final inventory = activeHero!.inventory;
+
+  List<String> result = [
+    '=== PR_NO 2: Hero Inventory ===',
+    if (inventory.isEmpty) 'Inventory kosong',
+  ];
+
+  inventory.forEach((key, value) {
+    result.add('• $key : $value');
+  });
+
+  show(result.join('\n'));
+}
 
   // PR 3: Extension toTitleCase()
   void demoAttackWithTitleCase() {
