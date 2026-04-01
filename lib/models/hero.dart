@@ -19,19 +19,26 @@ class HeroRpg {
   final int baseHp;
   final int baseMp;
 
+  // =============================
+  // ✅ TAMBAHAN: INVENTORY
+  // =============================
+  final Map<String, int> inventory;
+
   const HeroRpg({
     required this.name,
     required this.job,
     required this.baseHp,
     required this.baseMp,
+    this.inventory = const {}, // default kosong
   });
 
   // Named constructor (contoh)
   const HeroRpg.novice(String name)
-      : name = name,
-        job = Job.warrior,
-        baseHp = 50,
-        baseMp = 20;
+    : name = name,
+      job = Job.warrior,
+      baseHp = 50,
+      baseMp = 20,
+      inventory = const {}; // ✅ TAMBAHAN
 
   // Factory: bikin object dari Map/JSON
   factory HeroRpg.fromJson(Map<String, dynamic> json) {
@@ -48,6 +55,7 @@ class HeroRpg {
       job: job,
       baseHp: (json['baseHp'] as int?) ?? 50,
       baseMp: (json['baseMp'] as int?) ?? 20,
+      inventory: const {}, // ✅ TAMBAHAN
     );
   }
 
@@ -60,13 +68,48 @@ class HeroRpg {
     };
   }
 
-  // Method: mengembalikan object baru (immutable style)
+  // Method: level up (immutable)
   HeroRpg levelUp(int times) {
     return HeroRpg(
       name: name,
       job: job,
       baseHp: baseHp + 10 * times,
       baseMp: baseMp + 8 * times,
+      inventory: inventory, // ✅ TAMBAHAN (biar tidak hilang)
+    );
+  }
+
+  // =============================
+  // ✅ TAMBAHAN: HEAL (IMMUTABLE)
+  // =============================
+  HeroRpg heal() {
+    return HeroRpg(
+      name: name,
+      job: job,
+      baseHp: baseHp + 10,
+      baseMp: baseMp,
+      inventory: inventory,
+    );
+  }
+
+  // =============================
+  // ✅ TAMBAHAN: ADD ITEM
+  // =============================
+  HeroRpg addItem(String item) {
+    final newInventory = Map<String, int>.from(inventory);
+
+    if (newInventory.containsKey(item)) {
+      newInventory[item] = newInventory[item]! + 1;
+    } else {
+      newInventory[item] = 1;
+    }
+
+    return HeroRpg(
+      name: name,
+      job: job,
+      baseHp: baseHp,
+      baseMp: baseMp,
+      inventory: newInventory,
     );
   }
 
