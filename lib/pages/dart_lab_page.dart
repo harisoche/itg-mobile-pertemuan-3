@@ -39,22 +39,24 @@ class _DartLabPageState extends State<DartLabPage> {
     // Contoh list yang boleh menyimpan null
     final List<int?> potions = [1, null, 3];
 
-    show([
-      '=== Variables + Null Safety ===',
-      'name (var): $name',
-      'hp (final): $hp',
-      'maxLevel (const): $maxLevel',
-      'guild: $guild',
-      'guildName (??): $guildName',
-      'guildUpper (?.): $guildUpper',
-      'potions: $potions',
-      '',
-      'Catatan:',
-      '- var = Dart menebak tipe',
-      '- final = sekali assign (runtime)',
-      '- const = compile-time constant',
-      '- String? = boleh null',
-    ].join('\n'));
+    show(
+      [
+        '=== Variables + Null Safety ===',
+        'name (var): $name',
+        'hp (final): $hp',
+        'maxLevel (const): $maxLevel',
+        'guild: $guild',
+        'guildName (??): $guildName',
+        'guildUpper (?.): $guildUpper',
+        'potions: $potions',
+        '',
+        'Catatan:',
+        '- var = Dart menebak tipe',
+        '- final = sekali assign (runtime)',
+        '- const = compile-time constant',
+        '- String? = boleh null',
+      ].join('\n'),
+    );
   }
 
   // 2) FUNCTION: positional, named, optional, arrow, higher-order
@@ -84,21 +86,23 @@ class _DartLabPageState extends State<DartLabPage> {
     final spell2 = castSpell(spell: 'Heal', manaCost: 5);
     final doubledTwice = applyTwice(3, (x) => x * 2); // 3 -> 6 -> 12
 
-    show([
-      '=== Functions ===',
-      'add(2,3) => $resultAdd',
-      'greet("Rani") => $hello1',
-      'greet("Rani","Mage") => $hello2',
-      'castSpell(spell:"Fireball") => $spell1',
-      'castSpell(spell:"Heal", manaCost:5) => $spell2',
-      'applyTwice(3, x*2) => $doubledTwice',
-      '',
-      'Catatan:',
-      '- [param] = optional positional',
-      '- {param} = named parameter',
-      '- required = wajib diisi',
-      '- Function bisa jadi parameter',
-    ].join('\n'));
+    show(
+      [
+        '=== Functions ===',
+        'add(2,3) => $resultAdd',
+        'greet("Rani") => $hello1',
+        'greet("Rani","Mage") => $hello2',
+        'castSpell(spell:"Fireball") => $spell1',
+        'castSpell(spell:"Heal", manaCost:5) => $spell2',
+        'applyTwice(3, x*2) => $doubledTwice',
+        '',
+        'Catatan:',
+        '- [param] = optional positional',
+        '- {param} = named parameter',
+        '- required = wajib diisi',
+        '- Function bisa jadi parameter',
+      ].join('\n'),
+    );
   }
 
   // 3) COLLECTION: List/Map + map/where/fold + collection if/for
@@ -119,11 +123,7 @@ class _DartLabPageState extends State<DartLabPage> {
     final totalDamage = hits.fold<int>(0, (sum, x) => sum + x);
 
     // Map
-    final loot = {
-      'gold': 120,
-      'potion': 2,
-      'gem': 1,
-    };
+    final loot = {'gold': 120, 'potion': 2, 'gem': 1};
 
     // Collection if/for (seru buat bikin list dinamis)
     final level = rng.nextInt(5) + 1; // 1..5
@@ -133,25 +133,27 @@ class _DartLabPageState extends State<DartLabPage> {
       for (final item in loot.keys) '• $item',
     ];
 
-    show([
-      '=== Collections (List/Map) ===',
-      'monsters: $monsters',
-      'where(length>4): $strongNames',
-      'map(label): $labeled',
-      'hits: $hits',
-      'totalDamage (fold): $totalDamage',
-      '',
-      'loot map: $loot',
-      'random level: $level',
-      'rewards:',
-      ...rewards,
-      '',
-      'Catatan:',
-      '- where = filter',
-      '- map = transform',
-      '- fold = reduce + akumulasi',
-      '- collection if/for = list dinamis',
-    ].join('\n'));
+    show(
+      [
+        '=== Collections (List/Map) ===',
+        'monsters: $monsters',
+        'where(length>4): $strongNames',
+        'map(label): $labeled',
+        'hits: $hits',
+        'totalDamage (fold): $totalDamage',
+        '',
+        'loot map: $loot',
+        'random level: $level',
+        'rewards:',
+        ...rewards,
+        '',
+        'Catatan:',
+        '- where = filter',
+        '- map = transform',
+        '- fold = reduce + akumulasi',
+        '- collection if/for = list dinamis',
+      ].join('\n'),
+    );
   }
 
   // 4) CLASS + CONSTRUCTOR + FACTORY + GETTER + ENUM + EXTENSION
@@ -169,23 +171,69 @@ class _DartLabPageState extends State<DartLabPage> {
 
     final hero2 = HeroRpg.fromJson(json);
 
-    show([
-      '=== Class / Enum / Extension ===',
-      'hero: $hero',
-      'hero.power => ${hero.power}',
-      'leveled (levelUp 3x): $leveled',
-      '',
-      'fromJson:',
-      'hero2: $hero2',
-      'hero2.jobLabel => ${hero2.job.label}',
-      '',
-      'Catatan:',
-      '- constructor = cara membuat object',
-      '- factory fromJson = bikin object dari Map',
-      '- getter (power) = property hasil hitungan',
-      '- enum = pilihan tetap (job)',
-      '- extension = nambah kemampuan ke tipe (job.label)',
-    ].join('\n'));
+    show(
+      [
+        '=== Class / Enum / Extension ===',
+        'hero: $hero',
+        'hero.power => ${hero.power}',
+        'leveled (levelUp 3x): $leveled',
+        '',
+        'fromJson:',
+        'hero2: $hero2',
+        'hero2.jobLabel => ${hero2.job.label}',
+        '',
+        'Catatan:',
+        '- constructor = cara membuat object',
+        '- factory fromJson = bikin object dari Map',
+        '- getter (power) = property hasil hitungan',
+        '- enum = pilihan tetap (job)',
+        '- extension = nambah kemampuan ke tipe (job.label)',
+      ].join('\n'),
+    );
+  }
+
+  // CHALLENGE 1: Heal button
+  void demoHeal() {
+    final hero = HeroRpg(name: 'Rani', job: Job.mage, baseHp: 80, baseMp: 120);
+    final healed = hero.heal(10);
+
+    show(
+      [
+        '=== Heal Demo ===',
+        'hero asli    : hp=${hero.baseHp}',
+        'setelah heal : hp=${healed.baseHp}',
+        '',
+        'Catatan:',
+        '- heal() return HeroRpg BARU (immutable)',
+        '- hero asli tidak berubah',
+      ].join('\n'),
+    );
+  }
+
+  // CHALLENGE 2: Inventory button
+  void demoInventory() {
+    final inventory = <String, int>{
+      'Health Potion': 3,
+      'Mana Potion': 1,
+      'Iron Sword': 1,
+      'Gold Coin': 42,
+    };
+
+    final lines = inventory.entries.map((e) {
+      final pad = e.key.padRight(16);
+      return '  $pad x${e.value}';
+    }).toList();
+
+    final total = inventory.values.fold<int>(0, (s, v) => s + v);
+
+    show(
+      [
+        '=== Inventory ===',
+        ...lines,
+        '-' * 22,
+        '  Total item     : $total',
+      ].join('\n'),
+    );
   }
 
   // 5) ASYNC/AWAIT + TRY/CATCH
@@ -194,16 +242,18 @@ class _DartLabPageState extends State<DartLabPage> {
 
     try {
       final quest = await fetchQuest();
-      show([
-        '=== Async/Await ===',
-        'Quest didapat!',
-        '• $quest',
-        '',
-        'Catatan:',
-        '- Future = nilai yang datang belakangan',
-        '- await = tunggu Future selesai',
-        '- try/catch = tangani error',
-      ].join('\n'));
+      show(
+        [
+          '=== Async/Await ===',
+          'Quest didapat!',
+          '• $quest',
+          '',
+          'Catatan:',
+          '- Future = nilai yang datang belakangan',
+          '- await = tunggu Future selesai',
+          '- try/catch = tangani error',
+        ].join('\n'),
+      );
     } catch (e) {
       show('❌ Gagal ambil quest: $e');
     }
@@ -227,6 +277,34 @@ class _DartLabPageState extends State<DartLabPage> {
     ];
 
     return quests[rng.nextInt(quests.length)];
+  }
+
+  // CHALLENGE 4: Shop async
+  Future<void> demoShop() async {
+    show('⏳ Membuka toko...');
+    try {
+      final items = await fetchShopItems();
+      show(
+        [
+          '=== Shop Items ===',
+          ...items,
+          '',
+          'Catatan: fetchShopItems() pakai Future.delayed 1 detik',
+        ].join('\n'),
+      );
+    } catch (e) {
+      show('❌ Toko tutup: $e');
+    }
+  }
+
+  Future<List<String>> fetchShopItems() async {
+    await Future.delayed(const Duration(seconds: 1));
+    return [
+      '🗡️  Iron Sword      - 50 gold',
+      '🛡️  Wooden Shield   - 35 gold',
+      '🧪  Health Potion   - 10 gold',
+      '📜  Skill Scroll    - 120 gold',
+    ];
   }
 
   @override
@@ -270,8 +348,24 @@ class _DartLabPageState extends State<DartLabPage> {
                   icon: const Icon(Icons.cloud_download),
                   label: const Text('Async/Await'),
                 ),
+                ElevatedButton.icon(
+                  onPressed: demoHeal,
+                  icon: const Icon(Icons.favorite),
+                  label: const Text('Heal +10'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: demoInventory,
+                  icon: const Icon(Icons.backpack),
+                  label: const Text('Inventory'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () => demoShop(),
+                  icon: const Icon(Icons.store),
+                  label: const Text('Shop'),
+                ),
                 OutlinedButton.icon(
-                  onPressed: () => show('Tekan tombol untuk melihat demo Dart!'),
+                  onPressed: () =>
+                      show('Tekan tombol untuk melihat demo Dart!'),
                   icon: const Icon(Icons.refresh),
                   label: const Text('Clear'),
                 ),
@@ -289,7 +383,10 @@ class _DartLabPageState extends State<DartLabPage> {
                 child: SingleChildScrollView(
                   child: SelectableText(
                     output,
-                    style: const TextStyle(fontFamily: 'monospace', height: 1.35),
+                    style: const TextStyle(
+                      fontFamily: 'monospace',
+                      height: 1.35,
+                    ),
                   ),
                 ),
               ),
