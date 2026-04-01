@@ -63,24 +63,14 @@ class _DartLabPageState extends State<DartLabPage> {
 
   // 1) VAR / FINAL / CONST + NULL SAFETY
   void demoVariablesAndNullSafety() {
-    // var: tipe bisa "di-infer" oleh Dart
-    var name = 'Fathir'; // String
-
-    // final: nilainya hanya bisa di-assign sekali (runtime constant)
+    var name = 'Fathir';
     final hp = 100;
-
-    // const: benar-benar constant di compile-time
     const maxLevel = 10;
-
-    // Null safety: tipe? artinya boleh null
     String? guild;
 
-    // Operator ?? (kalau null, pakai nilai pengganti)
     final guildName = guild ?? 'No Guild';
-    // Operator ?. (akses property/method kalau tidak null)
-    final guildUpper = guildName.toUpperCase(); // hasilnya String? (bisa null)
+    final guildUpper = guildName.toUpperCase();
 
-    // Contoh list yang boleh menyimpan null
     final List<int?> potions = [1, null, 3];
 
     show(
@@ -105,20 +95,17 @@ class _DartLabPageState extends State<DartLabPage> {
 
   // 2) FUNCTION: positional, named, optional, arrow, higher-order
   void demoFunctions() {
-    int add(int a, int b) => a + b; // arrow function
+    int add(int a, int b) => a + b;
 
-    // optional positional parameter [ ... ]
     String greet(String name, [String? title]) {
       if (title == null) return 'Halo $name!';
       return 'Halo $title $name!';
     }
 
-    // named parameter { ... } + required
     String castSpell({required String spell, int manaCost = 10}) {
       return '🪄 Cast $spell (mana -$manaCost)';
     }
 
-    // function sebagai parameter
     int applyTwice(int value, int Function(int) f) {
       return f(f(value));
     }
@@ -128,7 +115,7 @@ class _DartLabPageState extends State<DartLabPage> {
     final hello2 = greet('Fathir', 'Godlane');
     final spell1 = castSpell(spell: 'Fireball');
     final spell2 = castSpell(spell: 'Heal', manaCost: 5);
-    final doubledTwice = applyTwice(3, (x) => x * 2); // 3 -> 6 -> 12
+    final doubledTwice = applyTwice(3, (x) => x * 2);
 
     show(
       [
@@ -152,25 +139,17 @@ class _DartLabPageState extends State<DartLabPage> {
   // 3) COLLECTION: List/Map + map/where/fold + collection if/for
   void demoCollections() {
     final rng = Random();
-
-    // List
     final monsters = ['Slime', 'Goblin', 'Wolf', 'Dragon'];
 
-    // Ambil monster yang panjang namanya > 4
     final strongNames = monsters.where((m) => m.length > 4).toList();
-
-    // Ubah jadi "Monster: X"
     final labeled = monsters.map((m) => 'Monster: $m').toList();
 
-    // Total damage acak untuk 3 hit
-    final hits = List.generate(3, (_) => rng.nextInt(10) + 1); // 1..10
+    final hits = List.generate(3, (_) => rng.nextInt(10) + 1);
     final totalDamage = hits.fold<int>(0, (sum, x) => sum + x);
 
-    // Map
     final loot = {'gold': 120, 'potion': 2, 'gem': 1};
 
-    // Collection if/for (seru buat bikin list dinamis)
-    final level = rng.nextInt(5) + 1; // 1..5
+    final level = rng.nextInt(5) + 1;
     final rewards = [
       '🎁 Daily Reward',
       if (level >= 3) '⭐ Bonus Reward (level >= 3)',
@@ -210,7 +189,6 @@ class _DartLabPageState extends State<DartLabPage> {
     );
     final leveled = hero.levelUp(3);
 
-    // Simulasi data JSON (Map)
     final json = {
       'name': 'Bima',
       'job': 'warrior',
@@ -265,10 +243,8 @@ class _DartLabPageState extends State<DartLabPage> {
   }
 
   Future<String> fetchQuest() async {
-    // Simulasi "internet" dengan delay
     await Future.delayed(const Duration(seconds: 1));
 
-    // Kadang gagal biar seru
     final rng = Random();
     if (rng.nextInt(5) == 0) {
       throw Exception('Server sedang tidur 😴');
@@ -348,9 +324,12 @@ class _DartLabPageState extends State<DartLabPage> {
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.06),
+                  // Pembetulan parameter alpha di bawah ini
+                  color: Colors.black.withValues(alpha: 0.06),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.black.withOpacity(0.1)),
+                  border: Border.all(
+                    color: Colors.black.withValues(alpha: 0.1),
+                  ),
                 ),
                 child: SingleChildScrollView(
                   child: SelectableText(
