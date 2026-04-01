@@ -1,10 +1,9 @@
 enum Job { warrior, mage, archer }
 
-// PR NO 3: Extension untuk String toTitleCase
 extension StringExt on String {
   String toTitleCase() {
-    if (this.isEmpty) return this;
-    return '${this[0].toUpperCase()}${this.substring(1).toLowerCase()}';
+    if (isEmpty) return this;
+    return '${this[0].toUpperCase()}${substring(1).toLowerCase()}';
   }
 }
 
@@ -23,11 +22,12 @@ extension JobLabel on Job {
 
 class HeroRpg {
   final String name;
-  final String title; // MENAMBAHKAN FIELD BARU
+  final String title;
   final Job job;
   final int baseHp;
   final int baseMp;
-// PR NO 2: Map item -> jumlah (Inventory)
+
+  // No 2: Inventory
   final Map<String, int> inventory;
 
   const HeroRpg({
@@ -36,10 +36,9 @@ class HeroRpg {
     required this.job,
     required this.baseHp,
     required this.baseMp,
-    this.inventory = const {}, // default: inventory kosong
+    this.inventory = const {},
   });
 
-  // Named constructor (contoh)
   const HeroRpg.novice(String name)
       : name = name,
         title = 'Novice',
@@ -48,7 +47,6 @@ class HeroRpg {
         baseMp = 20,
         inventory = const {'Potion': 1};
 
-  // Factory: bikin object dari Map/JSON
   factory HeroRpg.fromJson(Map<String, dynamic> json) {
     final jobString = (json['job'] as String?) ?? 'warrior';
 
@@ -68,19 +66,33 @@ class HeroRpg {
     );
   }
 
-// PR NO 1: Method Heal (Versi Immutable - Return Hero Baru)
+  // 1: Heal
   HeroRpg heal() {
     return HeroRpg(
       name: name,
       title: title,
       job: job,
-      baseHp: baseHp + 10, // Tambah HP +10
+      baseHp: baseHp + 10,
       baseMp: baseMp,
       inventory: inventory,
     );
   }
 
-  // Getter: property hasil hitungan
+  // 2: Add item
+  HeroRpg addItem(String item) {
+    final newInventory = Map<String, int>.from(inventory);
+    newInventory[item] = (newInventory[item] ?? 0) + 1;
+
+    return HeroRpg(
+      name: name,
+      title: title,
+      job: job,
+      baseHp: baseHp,
+      baseMp: baseMp,
+      inventory: newInventory,
+    );
+  }
+
   int get power {
     return switch (job) {
       Job.warrior => baseHp + (baseMp ~/ 4),
@@ -89,7 +101,6 @@ class HeroRpg {
     };
   }
 
-  // Method: mengembalikan object baru (immutable style)
   HeroRpg levelUp(int times) {
     return HeroRpg(
       name: name,
@@ -97,12 +108,12 @@ class HeroRpg {
       job: job,
       baseHp: baseHp + 10 * times,
       baseMp: baseMp + 8 * times,
+      inventory: inventory,
     );
   }
 
   @override
   String toString() {
-    return 'HeroRpg(name: $name, job: ${job.label}, hp: $baseHp, mp: $baseMp)';
+    return 'HeroRpg(name: $name, job: ${job.label}, hp: $baseHp, mp: $baseMp, inventory: $inventory)';
   }
 }
-
