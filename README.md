@@ -1,16 +1,13 @@
 # pertemuan_3
 
-A new Flutter project.
+- Tipe data, var/final/const, null safety (?, !, late)
 
-## Getting Started
+- Function, arrow function, optional parameter, named parameter
 
-This project is a starting point for a Flutter application.
+- Collection: List/Map/Set + map/where/forEach
 
-A few resources to get you started if this is your first Flutter project:
+- Class & OOP: constructor, named constructor, factory, getter/setter
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Enum, extension (pengantar)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Async: Future, async/await, try/catch
