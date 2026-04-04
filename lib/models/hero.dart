@@ -28,10 +28,10 @@ class HeroRpg {
 
   // Named constructor (contoh)
   const HeroRpg.novice(String name)
-      : name = name,
-        job = Job.warrior,
-        baseHp = 50,
-        baseMp = 20;
+    : name = name,
+      job = Job.warrior,
+      baseHp = 50,
+      baseMp = 20;
 
   // Factory: bikin object dari Map/JSON
   factory HeroRpg.fromJson(Map<String, dynamic> json) {
